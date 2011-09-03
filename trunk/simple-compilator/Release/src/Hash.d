@@ -1,0 +1,3 @@
+src/Hash.d src/Hash.o: ../src/Hash.cpp ../src/Hash.hpp
+
+../src/Hash.hpp:
