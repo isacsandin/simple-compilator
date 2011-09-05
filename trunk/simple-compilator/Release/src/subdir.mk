@@ -5,15 +5,18 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
 ../src/Compilador.cpp \
-../src/Hash.cpp 
+../src/Hash.cpp \
+../src/LexAnalyser.cpp 
 
 OBJS += \
 ./src/Compilador.o \
-./src/Hash.o 
+./src/Hash.o \
+./src/LexAnalyser.o 
 
 CPP_DEPS += \
 ./src/Compilador.d \
-./src/Hash.d 
+./src/Hash.d \
+./src/LexAnalyser.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
