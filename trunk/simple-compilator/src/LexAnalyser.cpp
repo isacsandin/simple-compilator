@@ -323,7 +323,7 @@ node *lexan(FILE* file){
 					n = alocaNode();
 					tok = getCorrectToken(tmp.str().c_str());
 					n->key = strdup(tok);
-					n->value = strdup(tmp.str().c_str());
+					n->value = strdup((tmp.str()).c_str());
 					n->value_int = atoi(tok);
 					n->next = NULL;
 					state = 8;

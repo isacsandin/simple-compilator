@@ -17,7 +17,7 @@ int main(int argc,char** argv) {
 	while(!feof(file)){
 		n = lexan(file);
 		if(n){
-			cout << "key: " << n->key << " value: " << n->value << " value_int: " << n->value_int << endl;
+			cout << "key: " << n->key << " value: "  << n->value <<  " value_int: " << n->value_int << endl;
 			put(h,n->key,n);
 		}
 	}
