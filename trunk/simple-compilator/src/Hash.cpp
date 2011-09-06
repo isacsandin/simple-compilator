@@ -11,6 +11,10 @@ hashtab *inithashtab(int tamanho){
 	return h;
 }
 
+node *alocaNode(){
+	return (node*)malloc(sizeof(node));
+}
+
 unsigned int hash(const char* str,int tamanho){
 	unsigned int hash = 0;
 	unsigned int x    = 0;

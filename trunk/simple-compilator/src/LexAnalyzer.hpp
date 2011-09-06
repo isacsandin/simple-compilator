@@ -5,11 +5,12 @@
 #include <iostream>
 #include <cstdlib>
 #include <cstdio>
+#include "Hash.hpp"
 
 using namespace std;
 
 void reconhece(string key,string valor);
-string lexan(FILE* file);
+node* lexan(FILE* file);
 
 
 #endif /* LEXANALYZER_HPP_ */
