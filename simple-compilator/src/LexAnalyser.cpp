@@ -6,35 +6,78 @@ void reconhece(string key,string valor){
 	cout << key << " " << valor << endl;
 }
 
-string lexan(FILE* file){
+char *getCorrectToken(const char* token){
+
+	node reservadas[21]{
+			{"programa","300",300},
+			{"declare","301",301},
+			{"fim_declare","302",302},
+			{"arranjo","303",303},
+			{"de","304",304},
+			{"numerico","305",305},
+			{"booleano","306",306},
+			{"verdadeiro","307",307},
+			{"falso","308",308},
+			{"procedimento","309",309},
+			{"funcao","310",310},
+			{"se","311",311},
+			{"entao","312",312},
+			{"senao","313",313},
+			{"enquanto","314",314},
+			{"faca","315",315},
+			{"retorne","316",316},
+			{"e","317",317},
+			{"ou","318",318},
+			{"inicio","319",319},
+			{"fim","320",320},
+
+		};
+
+	for(int i=0;i<21;i++){
+		if(!strcmp(reservadas[i].key,token)){
+			return reservadas[i].value;
+		}
+	}
+	return (char*)string("299").c_str(); //identificador
+}
+
+node *lexan(FILE* file){
 	char token = ' ';
-	stringstream tmp, resultado;
+	char *tok;
+	stringstream tmp;
 	int state = 0;
+	node* n = NULL;
+
 	if(file){
 		if(!feof(file)){
 			while(true){
 				switch (state) {
 				case 0:
-					//cout << "estado zero" << endl;
 					token = getc(file);
 					switch (token) {
 					case '+':
-						reconhece("OP_MAIS","+");
-						resultado.clear();
+						n = alocaNode();
+						n->key = strdup("321");
+						n->value = strdup("OP_MAIS");
+						n->value_int = 321;
+						n->next = NULL;
 						state = 8;
-						resultado << "OP_MAIS";
 						break;
 					case '-':
-						reconhece("OP_MENOS","-");
-						resultado.clear();
+						n = alocaNode();
+						n->key = strdup("322");
+						n->value = strdup("OP_MENOS");
+						n->value_int = 322;
+						n->next = NULL;
 						state = 8;
-						resultado << "OP_MAIS";
 						break;
 					case '*':
-						reconhece("OP_ASTERISCO","*");
-						resultado.clear();
+						n = alocaNode();
+						n->key = strdup("323");
+						n->value = strdup("OP_VEZES");
+						n->value_int = 323;
+						n->next = NULL;
 						state = 8;
-						resultado << "OP_ASTERISCO";
 						break;
 					case '/':
 						state = 1;
@@ -46,66 +89,84 @@ string lexan(FILE* file){
 						state = 3;
 						break;
 					case '=':
-						reconhece("OP_IGUAL","=");
-						resultado.clear();
+						n = alocaNode();
+						n->key = strdup("324");
+						n->value = strdup("OP_IGUAL");
+						n->value_int = 324;
+						n->next = NULL;
 						state = 8;
-						resultado << "OP_IGUAL";
 						break;
 					case ':':
 						state = 4;
 						break;
 					case '[':
-						reconhece("OP_ABRE_COLCHETE","[");
-						resultado.clear();
+						n = alocaNode();
+						n->key = strdup("325");
+						n->value = strdup("OP_ABRE_COLCHETE");
+						n->value_int = 325;
+						n->next = NULL;
 						state = 8;
-						resultado << "OP_ABRE_COLCHETE";
 						break;
 					case ']':
-						reconhece("OP_FECHA_COLCHETE","]");
-						resultado.clear();
+						n = alocaNode();
+						n->key = strdup("326");
+						n->value = strdup("OP_FECHA_COLCHETE");
+						n->value_int = 326;
+						n->next = NULL;
 						state = 8;
-						resultado << "OP_FECHA_COLCHETE";
 						break;
 					case '{': //comentario
 						state = 5;
 						break;
 					case '(':
-						reconhece("OP_ABRE_PARENTESES","(");
-						resultado.clear();
+						n = alocaNode();
+						n->key = strdup("327");
+						n->value = strdup("OP_ABRE_PARENTESES");
+						n->value_int = 327;
+						n->next = NULL;
 						state = 8;
-						resultado << "OP_ABRE_PARENTESES";
 						break;
 					case ')':
-						reconhece("OP_FECHA_PARENTESES",")");
-						resultado.clear();
+						n = alocaNode();
+						n->key = strdup("328");
+						n->value = strdup("OP_FECHA_PARENTESES");
+						n->value_int = 328;
+						n->next = NULL;
 						state = 8;
-						resultado << "OP_FECHA_PARENTESES";
 						break;
 					case ';':
-						reconhece("OP_PONTO_VIRGULA",";");
-						resultado.clear();
+						n = alocaNode();
+						n->key = strdup("329");
+						n->value = strdup("OP_PONTO_VIRGULA");
+						n->value_int = 329;
+						n->next = NULL;
 						state = 8;
-						resultado << "OP_PONTO_VIRGULA";
 						break;
 					case ',':
-						reconhece("OP_VIRGULA",",");
-						resultado.clear();
+						n = alocaNode();
+						n->key = strdup("330");
+						n->value = strdup("OP_VIRGULA");
+						n->value_int = 330;
+						n->next = NULL;
 						state = 8;
-						resultado << "OP_VIRGULA";
 						break;
 					case '.':
-						reconhece("OP_PONTO",".");
-						resultado.clear();
+						n = alocaNode();
+						n->key = strdup("331");
+						n->value = strdup("OP_PONTO");
+						n->value_int = 331;
+						n->next = NULL;
 						state = 8;
-						resultado << "OP_PONTO";
 						break;
 				default:
 					if (isdigit(token)){
 						if(token == '0'){
-							reconhece("NUM","0");
-							resultado.clear();
+							n = alocaNode();
+							n->key = strdup("298");
+							n->value = strdup("0");
+							n->value_int = 0;
+							n->next = NULL;
 							state = 8;
-							resultado << "NUM:0";
 							break;
 						}
 						else{
@@ -118,15 +179,12 @@ string lexan(FILE* file){
 						break;
 					}
 					else{
-						resultado.clear();
-						state = 8;
-						resultado << "ERRO=> "+token;
+						n = NULL;
 						break;
 					}
 				}
 				break;
 				case 1: //comentario uma linha
-					//cout << "estado um" << endl;
 					token = getc(file);
 					switch (token) {
 					case '/':
@@ -136,93 +194,109 @@ string lexan(FILE* file){
 							tmp << token;
 							token = getc(file);
 						}
-						cout << "COMENTARIO: " << tmp.str() << endl;
-						state = 0;
+						n = alocaNode();
+						n->key = strdup("297");
+						n->value = strdup(tmp.str().c_str());
+						n->value_int = 297;
+						n->next = NULL;
+						state = 8;
 						break;
 					default:
 						ungetc(token,file);
-						reconhece("OP_BARRA","/");
-						resultado.clear();
+						n = alocaNode();
+						n->key = strdup("332");
+						n->value = strdup("OP_BARRA");
+						n->value_int = 332;
+						n->next = NULL;
 						state = 8;
-						resultado << "OP_BARRA";
 						break;
 					}
 					break;
 				case 2:
-					//cout << "estado dois" << endl;
 					token = getc(file);
 					switch (token) {
 					case '=':
-						reconhece("OP_MENOR_IGUAL","<=");
-						resultado.clear();
+						n = alocaNode();
+						n->key = strdup("333");
+						n->value = strdup("OP_MENOR_IGUAL");
+						n->value_int = 333;
+						n->next = NULL;
 						state = 8;
-						resultado << "OP_MENOR_IGUAL";
 						break;
 					case '>':
-						reconhece("OP_DIFERENTE","<>");
-						resultado.clear();
+						n = alocaNode();
+						n->key = strdup("334");
+						n->value = strdup("OP_DIFERENTE");
+						n->value_int = 334;
+						n->next = NULL;
 						state = 8;
-						resultado << "OP_DIFERENTE";
 						break;
 					default:
 						ungetc(token,file);
-						reconhece("OP_MENOR","<");
-						resultado.clear();
+						n = alocaNode();
+						n->key = strdup("335");
+						n->value = strdup("OP_MENOR");
+						n->value_int = 335;
+						n->next = NULL;
 						state = 8;
-						resultado << "OP_MENOR";
 						break;
 					}
 					break;
 				case 3:
-					//cout << "estado tres" << endl;
 					token = getc(file);
 					switch (token) {
 					case '=':
-						reconhece("OP_MAIOR_IGUAL",">=");
-						resultado.clear();
+						n = alocaNode();
+						n->key = strdup("336");
+						n->value = strdup("OP_MAIOR_IGUAL");
+						n->value_int = 336;
+						n->next = NULL;
 						state = 8;
-						resultado << "OP_MAIOR_IGUAL";
 						break;
 					default:
 						ungetc(token,file);
-						reconhece("OP_MAIOR",">");
-						resultado.clear();
+						n = alocaNode();
+						n->key = strdup("337");
+						n->value = strdup("OP_MAIOR");
+						n->value_int = 337;
+						n->next = NULL;
 						state = 8;
-						resultado << "OP_MAIOR";
 						break;
 					}
 					break;
 				case 4:
-					//cout << "estado quatro" << endl;
 					token = getc(file);
 					switch (token) {
 					case '=':
-						reconhece("OP_RECEBE",":=");
-						resultado.clear();
+						n = alocaNode();
+						n->key = strdup("338");
+						n->value = strdup("OP_RECEBE");
+						n->value_int = 338;
+						n->next = NULL;
 						state = 8;
-						resultado << "OP_RECEBE";
 						break;
 					default:
 						ungetc(token,file);
-						resultado.clear();
+						n = NULL;
 						state = 8;
-						resultado << "DOIS PONTOS SEM IGUAL";
 						break;
 					}
 					break;
 				case 5://comentario multiplas linhas
-					//cout << "estado cinco" << endl;
 					tmp.clear();
 					token = getc(file);
-					while (token != '}') {
+					while (token != '}' && !feof(file)) {
 						tmp << token;
 						token = getc(file);
 					}
-					cout << "COMENTARIO: " << tmp.str() << endl;
-					state = 0;
+					n = alocaNode();
+					n->key = strdup("297");
+					n->value = strdup(tmp.str().c_str());
+					n->value_int = 297;
+					n->next = NULL;
+					state = 8;
 					break;
 				case 6: //numeros
-					//cout << "estado seis" << endl;
 					tmp.clear();
 					tmp << token;
 					token = getc(file);
@@ -231,44 +305,43 @@ string lexan(FILE* file){
 						token = getc(file);
 					}
 					ungetc(token,file);
-					reconhece("NUM",tmp.str());
-					resultado.clear();
+					n = alocaNode();
+					n->key = strdup("298");
+					n->value = strdup(tmp.str().c_str());
+					n->value_int = atoi(tmp.str().c_str());
+					n->next = NULL;
 					state = 8;
-					resultado << "NUM:"+tmp.str();
 					break;
 				case 7: //id
-					//cout << "estado sete" << endl;
 					tmp << token;
 					token = getc(file);
-					while (isalnum(token)){
+					while (isalnum(token) || token == '_'){
 						tmp << token;
 						token = getc(file);
 					}
 					ungetc(token,file);
-					reconhece("ID",tmp.str());
-					resultado.clear();
+					n = alocaNode();
+					tok = getCorrectToken(tmp.str().c_str());
+					n->key = strdup(tok);
+					n->value = strdup(tmp.str().c_str());
+					n->value_int = atoi(tok);
+					n->next = NULL;
 					state = 8;
-					resultado << "ID:"+ tmp.str();
 					break;
 				case 8:
-					return resultado.str();
+					return n;
 				default:
-					cout << "estado indefinido!" << endl;
+					return NULL;
 					break;
 				}
 			}
 		}
 		else{
-			return "EOF";
+			return NULL;
 		}
 	}
 	else{
-		cout << "erro no arquivo" << endl;
-		exit(1);
+		return NULL;
 	}
-	return "ERRO kkk";
+	return NULL;
 }
-
-
-
-

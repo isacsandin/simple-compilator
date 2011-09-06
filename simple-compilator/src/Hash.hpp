@@ -8,6 +8,7 @@
 typedef struct _node{
 	char* key;
 	char* value;
+	int value_int;
 	struct _node *next;
 }node;
 
@@ -17,11 +18,12 @@ typedef struct _hashtab{
 }hashtab;
 
 hashtab *inithashtab(int tamanho);
+node *alocaNode();
 unsigned int hash(const char* str,int tamanho);
-node* search(hashtab *h,const char *key);
-bool remove(hashtab *h,const char *key);
+node* search(hashtab *h,const char *key,int token);
+//bool remove(hashtab *h,const char *key);
 bool put(hashtab *h,const char* key,node* n);
-bool put(hashtab *h,const char* key,const char* value);
+//bool put(hashtab *h,const char* key,const char* value);
 void printhashtable(hashtab *h);
 void cleanup(hashtab *h);
 
