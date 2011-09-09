@@ -6,7 +6,7 @@
 #include <cstring>
 
 typedef struct _node{
-	char* key;
+	int token;
 	char* value;
 	int value_int;
 	struct _node *next;
@@ -18,13 +18,21 @@ typedef struct _hashtab{
 }hashtab;
 
 hashtab *inithashtab(int tamanho);
+
 node *alocaNode();
+
+node *alocaNode(int token,const char* value,int value_int,node* next);
+
 unsigned int hash(const char* str,int tamanho);
-node* search(hashtab *h,const char *key,int token);
-//bool remove(hashtab *h,const char *key);
-bool put(hashtab *h,const char* key,node* n);
-//bool put(hashtab *h,const char* key,const char* value);
-void printhashtable(hashtab *h);
+
+node* search(hashtab *h,int token,const char *key);
+
+node *put(hashtab *h,const char* key,node* n);
+
+void printhashtable(hashtab *h,FILE *f);
+
+char *tokenRep(int token);
+
 void cleanup(hashtab *h);
 
 

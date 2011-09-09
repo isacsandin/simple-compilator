@@ -6,11 +6,15 @@
 #include <cstdlib>
 #include <cstdio>
 #include "Hash.hpp"
+#include "Utils.hpp"
+#include "Constantes.hpp"
 
 using namespace std;
 
-void reconhece(string key,string valor);
-node* lexan(FILE* file);
+static int linha_atual=1;
 
+int get(FILE *file);
+int unget(char c,FILE *file);
+node* lexan(FILE* file);
 
 #endif /* LEXANALYZER_HPP_ */
