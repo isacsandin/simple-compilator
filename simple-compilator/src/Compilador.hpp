@@ -16,4 +16,7 @@
 #include "Constantes.hpp"
 #include "Globals.hpp"
 
+using namespace std;
+
+
 #endif /* COMPILADOR_HPP_ */

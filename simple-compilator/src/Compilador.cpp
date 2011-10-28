@@ -23,11 +23,31 @@ int main(int argc,char** argv) {
 				break;
 		}
 	}
+
+//	hashtab *myhash;
+//	FILE *file;
+//	node *token;
+
+
 	file = fopen(input,"r");
 	myhash = inithashtab(201);
+	cout << file << endl;
+	cout << myhash << endl;
 
-	while(!feof(file)){
-	//do something
+	getToken();
+
+	cout << file << endl;
+	cout << myhash << endl;
+
+	cout << "hahaha" << endl;
+
+	cout << token->value << endl;
+
+	cout << "hahaha" << endl;
+
+	while(token->token != EOF){
+		cout << token->value << endl;
+		getToken();
 	}
 	return 0;
 }
