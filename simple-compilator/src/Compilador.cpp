@@ -1,3 +1,11 @@
+#include <iostream>
+#include <cstdio>
+#include <cstdlib>
+#include "Hash.hpp"
+#include "Utils.hpp"
+#include "LexAnalyzer.hpp"
+#include "Constantes.hpp"
+#include "Globals.hpp"
 #include "Compilador.hpp"
 
 using namespace std;
