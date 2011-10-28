@@ -38,6 +38,10 @@ int main(int argc,char** argv) {
 
 
 	file = fopen(input,"r");
+	while(!feof(file)){
+		printf("%c",fgetc(file));
+	}
+	rewind(file);
 	myhash = inithashtab(201);
 	cout << file << endl;
 	cout << myhash << endl;

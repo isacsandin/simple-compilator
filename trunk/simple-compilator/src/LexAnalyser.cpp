@@ -11,23 +11,27 @@
 
 using namespace std;
 
-hashtab *myhash;
-FILE *file;
-node *token;
-
 int get(){
+	hashtab *myhash;
+	FILE *file;
+	node *token;
 	int c = getc(file);
 	if(c == '\n') linha_atual++;
 	return c;
 }
 
 int unget(char c){
+	hashtab *myhash;
+	FILE *file;
+	node *token;
 	if(c == '\n') linha_atual--;
 	return ungetc(c,file);
 }
 
-node *getCorrectToken(const char* token){
-
+node *getCorrectToken(const char* tok){
+	hashtab *myhash;
+	FILE *file;
+	node *token;
 	node *n=NULL;
 
 	struct _aa{
@@ -59,7 +63,7 @@ node *getCorrectToken(const char* token){
 		};
 
 	for(int i=0;i<21;i++){
-		if(!strcmp(reservadas[i].index,token)){
+		if(!strcmp(reservadas[i].index,tok)){
 			n = alocaNode();
 			n->token = reservadas[i].token_type;
 			n->value = strdup("");
@@ -69,12 +73,15 @@ node *getCorrectToken(const char* token){
 	}
 	n = alocaNode();
 	n->token = ID;
-	n->value = strdup(token);
+	n->value = strdup(tok);
 	n->value_int = 0;
 	return n;
 }
 
 void getToken(){
+	hashtab *myhash;
+	FILE *file;
+	node *token;
 	char tok= ' ';
 	stringstream tmp;
 	int state = 0;
