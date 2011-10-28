@@ -2,13 +2,13 @@
 
 using namespace std;
 
-int get(FILE *file){
+int get(){
 	int c = getc(file);
 	if(c == '\n') linha_atual++;
 	return c;
 }
 
-int unget(char c,FILE *file){
+int unget(char c){
 	if(c == '\n') linha_atual--;
 	return ungetc(c,file);
 }
@@ -76,7 +76,7 @@ void getToken(){
 		switch (state) {
 		case 0:
 			tmp.clear();
-			tok = get(file);
+			tok = get();
 			switch (tok) {
 			case '+':
 				n = alocaNode(OP_MAIS,"+",0,NULL);
@@ -166,22 +166,22 @@ void getToken(){
 		}
 		break;
 		case 1: //comentario uma linha
-			tok = get(file);
+			tok = get();
 			switch (tok) {
 			case '/':
-				tok = get(file);
-				while(tok != '\n') tok = get(file);
+				tok = get();
+				while(tok != '\n') tok = get();
 				state = 0;
 				break;
 			default:
-				unget(tok,file);
+				unget(tok);
 				n = alocaNode(OP_DIVIDIDO,"/",0,NULL);
 				state = 8;
 				break;
 			}
 			break;
 		case 2:
-			tok = get(file);
+			tok = get();
 			switch (tok) {
 			case '=':
 				n = alocaNode(OP_MENOR_IGUAL,"<=",0,NULL);
@@ -192,71 +192,71 @@ void getToken(){
 				state = 8;
 				break;
 			default:
-				unget(tok,file);
+				unget(tok);
 				n = alocaNode(OP_MENOR,"<",0,NULL);
 				state = 8;
 				break;
 			}
 			break;
 		case 3:
-			tok = get(file);
+			tok = get();
 			switch (tok) {
 			case '=':
 				n = alocaNode(OP_MAIOR_IGUAL,">=",0,NULL);
 				state = 8;
 				break;
 			default:
-				unget(tok,file);
+				unget(tok);
 				n = alocaNode(OP_MAIOR,">",0,NULL);
 				state = 8;
 				break;
 			}
 			break;
 		case 4:
-			tok = get(file);
+			tok = get();
 			switch (tok) {
 			case '=':
 				n = alocaNode(OP_RECEBE,":=",0,NULL);
 				state = 8;
 				break;
 			default:
-				unget(tok,file);
+				unget(tok);
 				n = alocaNode(OP_DOIS_PONTOS,":",0,NULL);
 				state = 8;
 				break;
 			}
 			break;
 		case 5://comentario multiplas linhas
-			tok = get(file);
-			while (tok != '}' && !feof(file)) tok = get(file);
+			tok = get();
+			while (tok != '}' && !feof(file)) tok = get();
 			state = 0;
 			break;
 		case 6: //numeros
 			tmp.clear();
 			tmp << tok;
-			tok = get(file);
+			tok = get();
 			while (isdigit(tok)){
 				tmp << tok;
-				tok = get(file);
+				tok = get();
 			}
-			unget(tok,file);
+			unget(tok);
 			n = alocaNode(NUM,tmp.str().c_str(),atoi(tmp.str().c_str()),NULL);
 			state = 8;
 			break;
 		case 7: //id
 			tmp.clear();
 			tmp << tok;
-			tok = get(file);
+			tok = get();
 			while (isalnum(tok) || tok == '_'){
 				tmp << tok;
-				tok = get(file);
+				tok = get();
 			}
-			unget(tok,file);
+			unget(tok);
 			n = getCorrectToken(tmp.str().c_str());
 			state = 8;
 			break;
 		case 8:
-			if(n->token = EOF){
+			if(n->token == EOF){
 				token = n;
 				return;
 			}
