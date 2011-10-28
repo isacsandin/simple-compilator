@@ -2,6 +2,10 @@
 
 using namespace std;
 
+//hashtab *myhash;
+//FILE *file;
+//node *token;
+
 int get(){
 	int c = getc(file);
 	if(c == '\n') linha_atual++;
@@ -68,6 +72,7 @@ void getToken(){
 	node* n = NULL;
 
 	if(!file || feof(file)){
+		cout << "problema" << endl;
 		token = alocaNode(EOF,"$",0,NULL);
 		return;
 	}
