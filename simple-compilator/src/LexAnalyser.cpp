@@ -61,20 +61,23 @@ node *getCorrectToken(const char* token){
 	return n;
 }
 
-node *lexan(FILE* file){
-	char token = ' ';
+void getToken(){
+	char tok= ' ';
 	stringstream tmp;
 	int state = 0;
 	node* n = NULL;
 
-	if(!file || feof(file)) return NULL;
+	if(!file || feof(file)){
+		token = alocaNode(EOF,"$",0,NULL);
+		return;
+	}
 
 	while(true){
 		switch (state) {
 		case 0:
 			tmp.clear();
-			token = get(file);
-			switch (token) {
+			tok = get(file);
+			switch (tok) {
 			case '+':
 				n = alocaNode(OP_MAIS,"+",0,NULL);
 				state = 8;
@@ -135,8 +138,8 @@ node *lexan(FILE* file){
 				state = 8;
 				break;
 		default:
-			if (isdigit(token)){
-				if(token == '0'){
+			if (isdigit(tok)){
+				if(tok == '0'){
 					n = alocaNode(NUM,"0",0,NULL);
 					state = 8;
 					break;
@@ -146,15 +149,15 @@ node *lexan(FILE* file){
 					break;
 				}
 			}
-			else if (isalpha(token)){
+			else if (isalpha(tok)){
 				state = 7;
 				break;
 			}
 			else{
-				n = NULL;
+				n = alocaNode(EOF,"$",0,NULL);
 				if (feof(file)) state = 8;
-				else if (!iscntrl(token) && !isspace(token) && !isblank(token)){
-					fprintf(stderr,"caractere não identificado `%c'!! na linha %d\n",token,linha_atual);
+				else if (!iscntrl(tok) && !isspace(tok) && !isblank(tok)){
+					fprintf(stderr,"caractere não identificado `%c'!! na linha %d\n",tok,linha_atual);
 					state = 0;
 					//exit(1);
 				}
@@ -163,23 +166,23 @@ node *lexan(FILE* file){
 		}
 		break;
 		case 1: //comentario uma linha
-			token = get(file);
-			switch (token) {
+			tok = get(file);
+			switch (tok) {
 			case '/':
-				token = get(file);
-				while(token != '\n') token = get(file);
+				tok = get(file);
+				while(tok != '\n') tok = get(file);
 				state = 0;
 				break;
 			default:
-				unget(token,file);
+				unget(tok,file);
 				n = alocaNode(OP_DIVIDIDO,"/",0,NULL);
 				state = 8;
 				break;
 			}
 			break;
 		case 2:
-			token = get(file);
-			switch (token) {
+			tok = get(file);
+			switch (tok) {
 			case '=':
 				n = alocaNode(OP_MENOR_IGUAL,"<=",0,NULL);
 				state = 8;
@@ -189,75 +192,82 @@ node *lexan(FILE* file){
 				state = 8;
 				break;
 			default:
-				unget(token,file);
+				unget(tok,file);
 				n = alocaNode(OP_MENOR,"<",0,NULL);
 				state = 8;
 				break;
 			}
 			break;
 		case 3:
-			token = get(file);
-			switch (token) {
+			tok = get(file);
+			switch (tok) {
 			case '=':
 				n = alocaNode(OP_MAIOR_IGUAL,">=",0,NULL);
 				state = 8;
 				break;
 			default:
-				unget(token,file);
+				unget(tok,file);
 				n = alocaNode(OP_MAIOR,">",0,NULL);
 				state = 8;
 				break;
 			}
 			break;
 		case 4:
-			token = get(file);
-			switch (token) {
+			tok = get(file);
+			switch (tok) {
 			case '=':
 				n = alocaNode(OP_RECEBE,":=",0,NULL);
 				state = 8;
 				break;
 			default:
-				unget(token,file);
+				unget(tok,file);
 				n = alocaNode(OP_DOIS_PONTOS,":",0,NULL);
 				state = 8;
 				break;
 			}
 			break;
 		case 5://comentario multiplas linhas
-			token = get(file);
-			while (token != '}' && !feof(file)) token = get(file);
+			tok = get(file);
+			while (tok != '}' && !feof(file)) tok = get(file);
 			state = 0;
 			break;
 		case 6: //numeros
 			tmp.clear();
-			tmp << token;
-			token = get(file);
-			while (isdigit(token)){
-				tmp << token;
-				token = get(file);
+			tmp << tok;
+			tok = get(file);
+			while (isdigit(tok)){
+				tmp << tok;
+				tok = get(file);
 			}
-			unget(token,file);
+			unget(tok,file);
 			n = alocaNode(NUM,tmp.str().c_str(),atoi(tmp.str().c_str()),NULL);
 			state = 8;
 			break;
 		case 7: //id
 			tmp.clear();
-			tmp << token;
-			token = get(file);
-			while (isalnum(token) || token == '_'){
-				tmp << token;
-				token = get(file);
+			tmp << tok;
+			tok = get(file);
+			while (isalnum(tok) || tok == '_'){
+				tmp << tok;
+				tok = get(file);
 			}
-			unget(token,file);
+			unget(tok,file);
 			n = getCorrectToken(tmp.str().c_str());
 			state = 8;
 			break;
 		case 8:
-			return n;
+			if(n->token = EOF){
+				token = n;
+				return;
+			}
+			token = put(myhash,n->value,n);
+			return;
+
 		default:
-			return NULL;
-			break;
+			token = alocaNode(EOF,"$",0,NULL);
+			return;
 		}
 	}
-	return NULL;
+	token = alocaNode(EOF,"$",0,NULL);
+	return;
 }

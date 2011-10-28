@@ -1,9 +1,4 @@
-#include <iostream>
-#include "Hash.hpp"
-#include "Utils.hpp"
-#include "LexAnalyzer.hpp"
-#include "Constantes.hpp"
-
+#include "Compilador.hpp"
 
 using namespace std;
 using namespace Utils;
@@ -28,22 +23,11 @@ int main(int argc,char** argv) {
 				break;
 		}
 	}
+	file = fopen(input,"r");
+	myhash = inithashtab(201);
 
-
-	FILE *file = fopen(input,"r");
-	node *n = NULL;
-	hashtab *myhash = inithashtab(201);
 	while(!feof(file)){
-		n = lexan(file);
-		if(n){
-			put(myhash,n->value,n);
-			if(n->token == ID  || n->token == NUM )
-				cout << tokenRep(n->token) << " " << n->value  << endl;
-			else
-				cout << tokenRep(n->token) << endl;
-		}
+	//do something
 	}
-
-	printhashtable(myhash,stdout);
 	return 0;
 }

@@ -1,6 +1,4 @@
 #include "Hash.hpp"
-#include "Utils.hpp"
-#include "Constantes.hpp"
 
 hashtab *inithashtab(int tamanho){
 	int i;
@@ -53,35 +51,6 @@ node* search(hashtab *h,int token,const char *key){
 
 	return NULL;
 }
-
-//bool remove(hashtab *h,const char *key){
-//	unsigned int hi=hash(key,h->tamanho);
-//	node* np=h->tab[hi];
-//	node* tmp;
-//	//caso nao tenha nodos...
-//	if(np == NULL) return false;
-//	//caso o nodo seja o primeiro
-//	if(!strcmp(np->key,key)){
-//		h->tab[hi]=np->next;
-//		free(np);
-//		return true;
-//	}
-//	//caso contrario
-//	else{
-//		tmp = np;
-//		np=np->next;
-//		while(np!=NULL){
-//			if(!strcmp(np->key,key)){
-//					tmp->next = tmp->next->next;
-//					free(np);
-//					return true;
-//			}
-//			tmp = np;
-//			np=np->next;
-//			}
-//	}
-//	return false;
-//}
 
 node *put(hashtab *h,const char* key,node* n){
 	unsigned int hi;
