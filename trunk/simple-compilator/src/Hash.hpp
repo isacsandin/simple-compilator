@@ -4,6 +4,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include "Utils.hpp"
+#include "Constantes.hpp"
 
 typedef struct _node{
 	int token;
