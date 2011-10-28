@@ -1,3 +1,8 @@
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include "Utils.hpp"
+#include "Constantes.hpp"
 #include "Hash.hpp"
 
 hashtab *inithashtab(int tamanho){

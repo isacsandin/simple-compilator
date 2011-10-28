@@ -1,12 +1,6 @@
 #ifndef HASH_HPP_
 #define HASH_HPP_
 
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include "Utils.hpp"
-#include "Constantes.hpp"
-
 typedef struct _node{
 	int token;
 	char* value;

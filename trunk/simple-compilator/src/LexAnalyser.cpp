@@ -1,3 +1,12 @@
+#include <cstring>
+#include <sstream>
+#include <iostream>
+#include <cstdlib>
+#include <cstdio>
+#include "Hash.hpp"
+#include "Utils.hpp"
+#include "Constantes.hpp"
+#include "Globals.hpp"
 #include "LexAnalyzer.hpp"
 
 using namespace std;
@@ -72,7 +81,10 @@ void getToken(){
 	node* n = NULL;
 
 	if(!file || feof(file)){
-		cout << "problema" << endl;
+		if(!file) cout << "problema1" << endl;
+		else if(feof(file)) cout << "problema2" << endl;
+		else cout << "problema3" << endl;
+
 		token = alocaNode(EOF,"$",0,NULL);
 		return;
 	}
