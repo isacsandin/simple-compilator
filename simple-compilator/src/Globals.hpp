@@ -2,8 +2,8 @@
 #define GLOBALS_HPP_
 
 
-static hashtab *myhash = NULL;
-static FILE *file = NULL;
-static node *token = NULL;
+extern hashtab *myhash;
+extern FILE *file;
+extern node *token;
 
 #endif /* GLOBALS_HPP_ */

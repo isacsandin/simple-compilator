@@ -32,9 +32,9 @@ int main(int argc,char** argv) {
 		}
 	}
 
-//	hashtab *myhash;
-//	FILE *file;
-//	node *token;
+	hashtab *myhash = NULL;
+	FILE *file = NULL;
+	node *token = NULL;
 
 
 	file = fopen(input,"r");

@@ -11,9 +11,9 @@
 
 using namespace std;
 
-//hashtab *myhash;
-//FILE *file;
-//node *token;
+hashtab *myhash;
+FILE *file;
+node *token;
 
 int get(){
 	int c = getc(file);
