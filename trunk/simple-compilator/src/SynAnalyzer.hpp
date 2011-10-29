@@ -1,5 +1,5 @@
-#ifndef COMPILADOR_HPP_
-#define COMPILADOR_HPP_
+#ifndef SYNANALYZER_HPP_
+#define SYNANALYZER_HPP_
 
 #include <iostream>
 #include <cstdio>
@@ -7,7 +7,6 @@
 #include "Hash.hpp"
 #include "Utils.hpp"
 #include "LexAnalyzer.hpp"
-#include "SynAnalyzer.hpp"
 #include "Constantes.hpp"
 #include "Globals.hpp"
 
@@ -15,4 +14,13 @@ extern hashtab *myhash;
 extern FILE *file;
 extern node *token;
 
-#endif /* COMPILADOR_HPP_ */
+
+int casaToken(node *tok,int tok_type);
+int expressao();
+int expressao_simples();
+int expressao_l();
+int expressao_ll();
+int expressao_lll();
+
+
+#endif /* SYNANALYZER_HPP_ */

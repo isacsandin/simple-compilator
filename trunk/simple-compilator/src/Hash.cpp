@@ -20,10 +20,10 @@ node *alocaNode(){
 	return (node*)malloc(sizeof(node));
 }
 
-node *alocaNode(int token,const char* value,int value_int,node* next){
+node *alocaNode(int tok,const char* value,int value_int,node* next){
 	node *n = alocaNode();
 	if(n){
-	n->token = token;
+	n->token = tok;
 	n->value = strdup(value);
 	n->value_int = value_int;
 	n->next = next;
@@ -46,12 +46,12 @@ unsigned int hash(const char* str,int tamanho){
 	return hash%tamanho;
 }
 
-node* search(hashtab *h,int token,const char *key){
+node* search(hashtab *h,int tok,const char *key){
 	unsigned int hi=hash(key,h->tamanho);
 	node* np=h->tab[hi];
 
 	for(;np!=NULL;np=np->next){
-			if(np->token == token && !strcmp(np->value,key))
+			if(np->token == tok && !strcmp(np->value,key))
 				return np;
 		}
 
