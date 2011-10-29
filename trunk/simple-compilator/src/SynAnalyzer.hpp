@@ -12,7 +12,7 @@
 
 extern hashtab *myhash;
 extern FILE *file;
-extern node *token;
+extern node *token;;
 
 
 int casaToken(node *tok,int tok_type);
