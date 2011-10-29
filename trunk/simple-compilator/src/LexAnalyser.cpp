@@ -2,10 +2,6 @@
 
 using namespace std;
 
-extern hashtab *myhash;
-extern FILE *file;
-extern node *token;
-
 int get(){
 	int c = getc(file);
 	if(c == '\n') linha_atual++;
@@ -155,7 +151,7 @@ void getToken(){
 				n = alocaNode(EOF,"$",0,NULL);
 				if (feof(file)) state = 8;
 				else if (!iscntrl(tok) && !isspace(tok) && !isblank(tok)){
-					fprintf(stderr,"caractere não identificado `%c'!! na linha %d\n",tok,linha_atual);
+					fprintf(stderr,"caractere não identificado `%c' na linha %d\n",tok,linha_atual);
 					state = 0;
 					//exit(1);
 				}

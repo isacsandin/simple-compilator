@@ -27,15 +27,5 @@ int main(int argc,char** argv) {
 	file = fopen("teste","r");
 	myhash = inithashtab(20);
 
-	/*while(!feof(file)){
-		printf("%c",fgetc(file));
-	}*/
-
-
-	getToken();
-
-	while(token->token != EOF){
-		getToken();
-	}
 	return 0;
 }

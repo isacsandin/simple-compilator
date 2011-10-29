@@ -1,21 +1,21 @@
 programa teste;
 {
-este e um comentario de
+este e um comentario de 
 varias linhas
 }
 numerico k; //comentario um linha
 declare main
-﻿  begin
-﻿  ﻿  booleano a;
-﻿  ﻿  numerico b = 20;
-﻿  ﻿  numerico g = 30#;
-﻿  ﻿  numerico f = 6000;
-﻿  ﻿  se (a) inicio
-﻿  ﻿  ﻿  se (b) inicio
-﻿  ﻿  ﻿  ﻿  numerico c;
-﻿  ﻿  ﻿  senao
-﻿  ﻿  ﻿  ﻿  numerico d;
-﻿  ﻿  ﻿  fim
-﻿  ﻿  fim
-﻿  fim
+	begin
+		booleano a;
+		numerico b = 20;
+		numerico g = 30#;
+		numerico f = 6000;
+		se (a) inicio 
+			se (b) inicio
+				numerico c;
+			senao
+				numerico d;
+			fim
+		fim
+	fim
 fim_declare
