@@ -5,6 +5,7 @@
 #include "Constantes.hpp"
 #include "Hash.hpp"
 
+
 hashtab *inithashtab(int tamanho){
 	int i;
 	hashtab* h = (hashtab*)malloc(sizeof(hashtab));

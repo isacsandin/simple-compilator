@@ -2,27 +2,22 @@
 
 using namespace std;
 
+extern hashtab *myhash;
+extern FILE *file;
+extern node *token;
+
 int get(){
-	hashtab *myhash;
-	FILE *file;
-	node *token;
 	int c = getc(file);
 	if(c == '\n') linha_atual++;
 	return c;
 }
 
 int unget(char c){
-	hashtab *myhash;
-	FILE *file;
-	node *token;
 	if(c == '\n') linha_atual--;
 	return ungetc(c,file);
 }
 
 node *getCorrectToken(const char* tok){
-	hashtab *myhash;
-	FILE *file;
-	node *token;
 	node *n=NULL;
 
 	struct _aa{
@@ -70,22 +65,10 @@ node *getCorrectToken(const char* tok){
 }
 
 void getToken(){
-	hashtab *myhash;
-	FILE *file;
-	node *token;
 	char tok= ' ';
 	stringstream tmp;
 	int state = 0;
 	node* n = NULL;
-
-	if(!file || feof(file)){
-		if(!file) cout << "problema1" << endl;
-		else if(feof(file)) cout << "problema2" << endl;
-		else cout << "problema3" << endl;
-
-		token = alocaNode(EOF,"$",0,NULL);
-		return;
-	}
 
 	while(true){
 		switch (state) {

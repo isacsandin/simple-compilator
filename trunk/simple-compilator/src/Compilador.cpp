@@ -25,16 +25,17 @@ int main(int argc,char** argv) {
 	}
 	file = fopen(input,"r");*/
 	file = fopen("teste","r");
+	myhash = inithashtab(20);
 
-	while(!feof(file)){
+	/*while(!feof(file)){
 		printf("%c",fgetc(file));
-	}
-	/*
+	}*/
+
+
 	getToken();
 
 	while(token->token != EOF){
-		cout << token->value << endl;
 		getToken();
-	}*/
+	}
 	return 0;
 }
