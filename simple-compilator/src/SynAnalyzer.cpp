@@ -10,7 +10,7 @@
 
 <expressao''> --> = <expressao_simples> | <expressao_simples>
 <expressao'''> --> = <expressao_simples> | > <expressao_simples> | <expressao_simples>
-*/
+***/
 
 int casaToken(node* tok,int tok_type){ return -1;}
 
