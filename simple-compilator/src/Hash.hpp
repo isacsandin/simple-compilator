@@ -17,17 +17,17 @@ hashtab *inithashtab(int tamanho);
 
 node *alocaNode();
 
-node *alocaNode(int token,const char* value,int value_int,node* next);
+node *alocaNode(int tok,const char* value,int value_int,node* next);
 
 unsigned int hash(const char* str,int tamanho);
 
-node* search(hashtab *h,int token,const char *key);
+node* search(hashtab *h,int tok,const char *key);
 
 node *put(hashtab *h,const char* key,node* n);
 
 void printhashtable(hashtab *h,FILE *f);
 
-char *tokenRep(int token);
+char *tokenRep(int tok);
 
 void cleanup(hashtab *h);
 

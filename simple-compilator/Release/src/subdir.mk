@@ -6,17 +6,20 @@
 CPP_SRCS += \
 ../src/Compilador.cpp \
 ../src/Hash.cpp \
-../src/LexAnalyser.cpp 
+../src/LexAnalyser.cpp \
+../src/SynAnalyzer.cpp 
 
 OBJS += \
 ./src/Compilador.o \
 ./src/Hash.o \
-./src/LexAnalyser.o 
+./src/LexAnalyser.o \
+./src/SynAnalyzer.o 
 
 CPP_DEPS += \
 ./src/Compilador.d \
 ./src/Hash.d \
-./src/LexAnalyser.d 
+./src/LexAnalyser.d \
+./src/SynAnalyzer.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
