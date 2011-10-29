@@ -1,11 +1,3 @@
-#include <iostream>
-#include <cstdio>
-#include <cstdlib>
-#include "Hash.hpp"
-#include "Utils.hpp"
-#include "LexAnalyzer.hpp"
-#include "Constantes.hpp"
-#include "Globals.hpp"
 #include "Compilador.hpp"
 
 using namespace std;
@@ -13,7 +5,7 @@ using namespace Utils;
 
 int main(int argc,char** argv) {
 
-	int opt;
+	/*int opt;
 	char *input = NULL;
 	while ((opt = getopt (argc, argv, "f:")) != -1) {
 		switch (opt) {
@@ -31,35 +23,18 @@ int main(int argc,char** argv) {
 				break;
 		}
 	}
+	file = fopen(input,"r");*/
+	file = fopen("teste","r");
 
-	hashtab *myhash = NULL;
-	FILE *file = NULL;
-	node *token = NULL;
-
-
-	file = fopen(input,"r");
 	while(!feof(file)){
 		printf("%c",fgetc(file));
 	}
-	rewind(file);
-	myhash = inithashtab(201);
-	cout << file << endl;
-	cout << myhash << endl;
-
+	/*
 	getToken();
-
-	cout << file << endl;
-	cout << myhash << endl;
-
-	cout << "hahaha" << endl;
-
-	cout << token->value << endl;
-
-	cout << "hahaha" << endl;
 
 	while(token->token != EOF){
 		cout << token->value << endl;
 		getToken();
-	}
+	}*/
 	return 0;
 }

@@ -1,12 +1,3 @@
-#include <cstring>
-#include <sstream>
-#include <iostream>
-#include <cstdlib>
-#include <cstdio>
-#include "Hash.hpp"
-#include "Utils.hpp"
-#include "Constantes.hpp"
-#include "Globals.hpp"
 #include "LexAnalyzer.hpp"
 
 using namespace std;
