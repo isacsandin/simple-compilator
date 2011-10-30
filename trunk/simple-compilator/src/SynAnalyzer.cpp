@@ -584,10 +584,15 @@ int enunciados_opcionais() {
 }
 
 int lista_enunciados() {
-	DEBUG(cout<< "<lista_ids_l>" << endl);
-//, id <lista_de_ids> | epsilon
-	if (token->token == OP_VIRGULA) {
+	DEBUG(cout<< "<lista_de_enunciados>" << endl);
+//	<lista_de_enunciados> --> <enunciado> | <lista_de_enunciados'>
+	if (token->token == ID || token->token == RW_INICIO || token->token == RW_SE
+			|| token->token == RW_ENQUANTO) {
+		enunciado();
 		return 1;
+	} else if (token->token == OP_PONTO_VIRGULA) {
+		lista_enunciados_l();
+		return -1;
 	}
 //folow
 	else if (token->token == OP_DOIS_PONTOS) {
@@ -597,22 +602,90 @@ int lista_enunciados() {
 	}
 }
 int lista_enunciados_l() {
-	DEBUG(cout<< "<lista_ids_l>" << endl);
-//, id <lista_de_ids> | epsilon
-	if (token->token == OP_VIRGULA) {
+	DEBUG(cout<< "<lista_de_enunciados_l>" << endl);
+//	<lista_de_enunciados'> -->  ; <enunciado> <lista_de_enunciados'>
+	if (token->token == OP_PONTO_VIRGULA) {
+		casaToken(token, OP_PONTO_VIRGULA);
+		enunciado();
+		lista_enunciados_l();
 		return 1;
 	}
 //folow
-	else if (token->token == OP_DOIS_PONTOS) {
+	else if (token->token == RW_FIM) {
 		return -1;
 	} else {
 		return -1;
 	}
 }
 int enunciado() {
-	DEBUG(cout<< "<lista_ids_l>" << endl);
-//, id <lista_de_ids> | epsilon
-	if (token->token == OP_VIRGULA) {
+	DEBUG(cout<< "<enunciado>" << endl);
+	//	<enunciado> --> id <enunciado'>
+	if (token->token == ID) {
+		casaToken(token, ID);
+		enunciado()
+		return 1;
+	}
+	//	<enunciado> --> <enunciado_composto>
+	else if (token->token == RW_INICIO) {
+		enunciado_composto();
+		return 1;
+	}
+	//	<enunciado> --> se <expressao> entao <enunciado> senao <enunciado>
+	else if (token->token == RW_SE) {
+		casaToken(token, RW_SE);
+		expressao();
+		casaToken(token, RW_ENTAO);
+		enunciado();
+		casaToken(token, RW_SENAO);
+		enunciado();
+		return 1;
+	}
+	//	<enunciado> --> enquanto <expressao> faca <enunciado>
+	else if (token->token == RW_ENQUANTO) {
+		casaToken(token, RW_ENQUANTO);
+		expressao();
+		casaToken(token, RW_FACA);
+		enunciado();
+		return 1;
+	}
+//folow
+	else if (token->token == OP_FECHA_PARENTESES
+			|| token->token == OP_PONTO_VIRGULA || token->token == RW_FIM
+			|| token->token == RW_SENAO) {
+		return -1;
+	} else {
+		return -1;
+	}
+}
+int enunciado_l() {
+	DEBUG(cout<< "<enunciado_l>" << endl);
+	//	<enunciado'> --> <variavel'> := <expressao>
+	if (token->token == OP_ABRE_COLCHETE) {
+		variavel_l();
+		casaToken(token, OP_RECEBE);
+		expressao();
+		return 1;
+	}
+	//	<enunciado'> --> <chamada_de_procedimento'>
+	else if (token->token == OP_ABRE_PARENTESES) {
+		chamada_procedimento_l();
+		return 1;
+	}
+//folow
+	else if (token->token == OP_FECHA_PARENTESES
+			|| token->token == OP_PONTO_VIRGULA || token->token == RW_FIM
+			|| token->token == RW_SENAO) {
+		return -1;
+	} else {
+		return -1;
+	}
+}
+/*int variavel() {
+	DEBUG(cout<< "<variavel>" << endl);
+//	<variavel> --> id <variavel'>
+	if (token->token == ID) {
+		casaToken(token, ID);
+		variavel_l();
 		return 1;
 	}
 //folow
@@ -621,24 +694,14 @@ int enunciado() {
 	} else {
 		return -1;
 	}
-}
-int variavel() {
-	DEBUG(cout<< "<lista_ids_l>" << endl);
-//, id <lista_de_ids> | epsilon
-	if (token->token == OP_VIRGULA) {
-		return 1;
-	}
-//folow
-	else if (token->token == OP_DOIS_PONTOS) {
-		return -1;
-	} else {
-		return -1;
-	}
-}
+}*/
 int variavel_l() {
-	DEBUG(cout<< "<lista_ids_l>" << endl);
-//, id <lista_de_ids> | epsilon
-	if (token->token == OP_VIRGULA) {
+	DEBUG(cout<< "<variavel'>" << endl);
+//	<variavel'> --> [ <expressao> ] | epsilon
+	if (token->token == OP_ABRE_COLCHETE) {
+		casaToken(token, OP_ABRE_COLCHETE);
+		expressao();
+		casaToken(token, OP_FECHA_COLCHETE);
 		return 1;
 	}
 //folow
@@ -648,27 +711,36 @@ int variavel_l() {
 		return -1;
 	}
 }
-int chamada_procedimento() {
-	DEBUG(cout<< "<lista_ids_l>" << endl);
-//, id <lista_de_ids> | epsilon
-	if (token->token == OP_VIRGULA) {
+/*int chamada_procedimento() {
+	DEBUG(cout<< "<chamada_de_procedimento>" << endl);
+//	<chamada_de_procedimento> --> id <chamada_de_procedimento'>
+	if (token->token == ID) {
+		casaToken(token, ID);
+		chamada_procedimento_l();
 		return 1;
 	}
 //folow
-	else if (token->token == OP_DOIS_PONTOS) {
+	else if (token->token == OP_PONTO_VIRGULA || token->token == RW_FIM
+			|| token->token == RW_SENAO
+			|| token->token == OP_FECHA_PARENTESES) {
 		return -1;
 	} else {
 		return -1;
 	}
-}
+}*/
 int chamada_procedimento_l() {
-	DEBUG(cout<< "<lista_ids_l>" << endl);
-//, id <lista_de_ids> | epsilon
-	if (token->token == OP_VIRGULA) {
+	DEBUG(cout<< "<chamada_de_procedimento_l>" << endl);
+//  <chamada_de_procedimento'> --> ( <lista_de_expressoes> ) | epsilon
+	if (token->token == OP_ABRE_PARENTESES) {
+		casaToken(token, OP_ABRE_PARENTESES);
+		lista_expressoes();
+		casaToken(token, OP_FECHA_PARENTESES);
 		return 1;
 	}
 //folow
-	else if (token->token == OP_DOIS_PONTOS) {
+	else if (token->token == OP_PONTO_VIRGULA || token->token == RW_FIM
+			|| token->token == RW_SENAO
+			|| token->token == OP_FECHA_PARENTESES) {
 		return -1;
 	} else {
 		return -1;
