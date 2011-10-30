@@ -282,8 +282,6 @@ int lista_expressoes() {
 			|| token->token == OP_DIVIDIDO || token->token == OP_MENOR
 			|| token->token == OP_MAIOR || token->token == OP_RECEBE) {
 		expressao();
-		return 1;
-	} else if (token->token == OP_VIRGULA) {
 		lista_expressoes_l();
 		return 1;
 	}
