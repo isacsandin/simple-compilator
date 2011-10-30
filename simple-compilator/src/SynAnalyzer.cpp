@@ -414,73 +414,100 @@ int tipo() {
 		tipo_padrao();
 		return 1;
 	}
-	//folow ; | )
-	else if (token->token == OP_PONTO_VIRGULA || token->token == OP_FECHA_PARENTESES) {
+	//folow
+	else if (token->token == OP_PONTO_VIRGULA
+			|| token->token == OP_FECHA_PARENTESES) {
 		return -1;
 	} else {
 		return -1;
 	}
 }
 int tipo_padrao() {
-	DEBUG(cout<< "<lista_ids_l>" << endl);
-//, id <lista_de_ids> | epsilon
-	if (token->token == OP_VIRGULA) {
+	DEBUG(cout<< "<tipo_padrao>" << endl);
+	//<tipo_padrao> --> numerico | booleano
+	if (token->token == RW_NUMERICO) {
+		casaToken(token, RW_NUMERICO);
+		return 1;
+	} else if (token->token == RW_BOOLEANO) {
+		casaToken(token, RW_BOOLEANO);
 		return 1;
 	}
-//folow
-	else if (token->token == OP_DOIS_PONTOS) {
+	//folow
+	else if (token->token == OP_PONTO_VIRGULA
+			|| token->token == OP_FECHA_PARENTESES) {
 		return -1;
 	} else {
 		return -1;
 	}
 }
 int declaracoes_subprograma() {
-	DEBUG(cout<< "<lista_ids_l>" << endl);
-//, id <lista_de_ids> | epsilon
-	if (token->token == OP_VIRGULA) {
+	DEBUG(cout<< "<declaracoes_subprograma>" << endl);
+	// <declaracoes_de_subprogramas> -->  <declaracao_de_subprograma> <declaracoes_de_subprogramas> | epsilon
+	if (token->token == RW_FUNCAO || token->token == RW_PROCEDIMENTO) {
+		declaracao_subprograma();
+		declaracoes_subprograma();
 		return 1;
 	}
-//folow
-	else if (token->token == OP_DOIS_PONTOS) {
+	//folow
+	else if (token->token == RW_INICIO) {
 		return -1;
 	} else {
 		return -1;
 	}
 }
 int declaracao_subprograma() {
-	DEBUG(cout<< "<lista_ids_l>" << endl);
-//, id <lista_de_ids> | epsilon
-	if (token->token == OP_VIRGULA) {
+	DEBUG(cout<< "<declaracao_subprograma>" << endl);
+	//<declaracao_de_subprograma> --> <cabecalho_de_subprograma> <declaracoes> <enunciado_composto>
+	if (token->token == RW_FUNCAO || token->token == RW_PROCEDIMENTO) {
+		cabecalho_subprograma();
+		declaracoes();
+		enunciado_composto();
 		return 1;
 	}
-//folow
-	else if (token->token == OP_DOIS_PONTOS) {
+	//folow
+	else if (token->token == RW_INICIO) {
 		return -1;
 	} else {
 		return -1;
 	}
 }
 int cabecalho_subprograma() {
-	DEBUG(cout<< "<lista_ids_l>" << endl);
-//, id <lista_de_ids> | epsilon
-	if (token->token == OP_VIRGULA) {
+	DEBUG(cout<< "<cabecalho_subprograma>" << endl);
+	//<cabecalho_de_subprograma> --> funcao id <argumentos> : <tipo_padrao> ; | procedimento id <argumentos> ;
+	if (token->token == RW_FUNCAO) {
+		casaToken(token, RW_FUNCAO);
+		casaToken(token, ID);
+		argumentos();
+		casaToken(token, OP_DOIS_PONTOS);
+		tipo_padrao();
+		casaToken(token, OP_PONTO_VIRGULA);
+		return 1;
+	} else if (token->token == RW_PROCEDIMENTO) {
+		casaToken(token, RW_PROCEDIMENTO);
+		casaToken(token, ID);
+		argumentos();
+		casaToken(token, OP_PONTO_VIRGULA);
 		return 1;
 	}
-//folow
-	else if (token->token == OP_DOIS_PONTOS) {
+	//folow
+	else if (token->token == RW_DECLARE) {
 		return -1;
 	} else {
 		return -1;
 	}
 }
 int argumentos() {
-	DEBUG(cout<< "<lista_ids_l>" << endl);
-//, id <lista_de_ids> | epsilon
-	if (token->token == OP_VIRGULA) {
+	DEBUG(cout<< "<argumentos>" << endl);
+	//<argumentos> --> ( <lista_de_parametros> ) | epsilon
+	if (token->token == OP_ABRE_PARENTESES) {
+		casaToken(token, OP_ABRE_PARENTESES);
+		lista_parametros();
+		casaToken(token, OP_FECHA_PARENTESES);
 		return 1;
 	}
-//folow
-	else if (token->token == OP_DOIS_PONTOS) {
+	//folow
+	else if (token->token == OP_DOIS_PONTOS
+			|| token->token == OP_PONTO_VIRGULA) {
 		return -1;
 	} else {
 		return -1;
@@ -488,12 +515,16 @@ int argumentos() {
 }
 int lista_parametros() {
 	DEBUG(cout<< "<lista_ids_l>" << endl);
-//, id <lista_de_ids> | epsilon
-	if (token->token == OP_VIRGULA) {
+	//<lista_de_parametros> --> <lista_de_ids> : <tipo>  <lista_de_parametros'>
+	if (token->token == ID) {
+		lista_ids();
+		casaToken(token, OP_DOIS_PONTOS);
+		tipo();
+		lista_parametros_l();
 		return 1;
 	}
-//folow
-	else if (token->token == OP_DOIS_PONTOS) {
+	//folow
+	else if (token->token == OP_FECHA_PARENTESES) {
 		return -1;
 	} else {
 		return -1;
@@ -501,12 +532,16 @@ int lista_parametros() {
 }
 int lista_parametros_l() {
 	DEBUG(cout<< "<lista_ids_l>" << endl);
-//, id <lista_de_ids> | epsilon
-	if (token->token == OP_VIRGULA) {
+	//<lista_de_parametros'> --> ; <lista_de_ids> : <tipo> <lista_de_parametros'> | epsilon
+	if (token->token == OP_PONTO_VIRGULA) {
+		lista_ids();
+		casaToken(token, OP_DOIS_PONTOS);
+		tipo();
+		lista_parametros_l();
 		return 1;
 	}
-//folow
-	else if (token->token == OP_DOIS_PONTOS) {
+	//folow
+	else if (token->token == OP_FECHA_PARENTESES) {
 		return -1;
 	} else {
 		return -1;
@@ -514,12 +549,18 @@ int lista_parametros_l() {
 }
 int enunciado_composto() {
 	DEBUG(cout<< "<lista_ids_l>" << endl);
-//, id <lista_de_ids> | epsilon
-	if (token->token == OP_VIRGULA) {
+	//<enunciado_composto> --> inicio <enunciados_opcionais> fim
+	if (token->token == RW_INICIO) {
+		casaToken(token, RW_INICIO);
+		enunciados_opcionais();
+		casaToken(token, RW_FIM);
 		return 1;
 	}
-//folow
-	else if (token->token == OP_DOIS_PONTOS) {
+	//folow S(<enunciado_composto>) = {funcao | procedimento | inicio | ) | ; | fim | senao | $}
+	else if (token->token == RW_FUNCAO || token->token == RW_PROCEDIMENTO
+			|| token->token == OP_FECHA_PARENTESES
+			|| token->token == OP_PONTO_VIRGULA || token->token == RW_FIM
+			|| token->token == RW_SENAO || token->token == EOF) {
 		return -1;
 	} else {
 		return -1;
@@ -527,17 +568,21 @@ int enunciado_composto() {
 }
 int enunciados_opcionais() {
 	DEBUG(cout<< "<lista_ids_l>" << endl);
-//, id <lista_de_ids> | epsilon
-	if (token->token == OP_VIRGULA) {
+	//<enunciados_opcionais> --> <lista_de_enunciados> | epsilon
+	if (token->token == ID || token->token == RW_INICIO || token->token == RW_SE
+			|| token->token == RW_ENQUANTO
+			|| token->token == OP_PONTO_VIRGULA) {
+		lista_enunciados();
 		return 1;
 	}
-//folow
-	else if (token->token == OP_DOIS_PONTOS) {
+	//folow
+	else if (token->token == RW_FIM) {
 		return -1;
 	} else {
 		return -1;
 	}
 }
+
 int lista_enunciados() {
 	DEBUG(cout<< "<lista_ids_l>" << endl);
 //, id <lista_de_ids> | epsilon
