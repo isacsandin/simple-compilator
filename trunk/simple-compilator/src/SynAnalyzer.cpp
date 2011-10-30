@@ -4,8 +4,12 @@ int casaToken(node* tok, int tok_type) {
 	if (tok->token == tok_type) {
 		DEBUG(cout<< "reconheceu  " << token->value << endl);
 		getToken();
+		return 1;
+	} else {
+		cerr << "linha " << linha_atual << ": Esperado" << tokenRep(tok_type)
+				<< "mas o encontrado foi " << tok->value << endl;
+		return -1;
 	}
-	return -1;
 }
 
 int expressao() {
@@ -372,16 +376,17 @@ int declaracoes() {
 	DEBUG(cout<< "<declaracoes>" << endl);
 	//<declaracoes> --> declare <lista_de_ids> : <tipo>; <declaracoes> | epsilon
 	if (token->token == RW_DECLARE) {
-		casaToken(token,RW_DECLARE);
+		casaToken(token, RW_DECLARE);
 		lista_ids();
-		casaToken(token,OP_DOIS_PONTOS);
+		casaToken(token, OP_DOIS_PONTOS);
 		tipo();
-		casaToken(token,OP_PONTO_VIRGULA);
+		casaToken(token, OP_PONTO_VIRGULA);
 		declaracoes();
 		return 1;
 	}
 	//S(<declaracoes>) = {declare | inicio | funcao | procedimento}
-	else if (token->token == RW_INICIO || token->token == RW_FUNCAO || token->token == RW_PROCEDIMENTO) {
+	else if (token->token == RW_INICIO || token->token == RW_FUNCAO
+			|| token->token == RW_PROCEDIMENTO) {
 		return -1;
 	} else {
 		return -1;
@@ -389,13 +394,28 @@ int declaracoes() {
 }
 
 int tipo() {
-	DEBUG(cout<< "<lista_ids_l>" << endl);
-//, id <lista_de_ids> | epsilon
-	if (token->token == OP_VIRGULA) {
+	DEBUG(cout<< "<tipo>" << endl);
+	//<tipo_padrao> | arranjo [ num .. num ] de <tipo_padrao>
+	if (token->token == RW_NUMERICO) {
+		casaToken(token, RW_NUMERICO);
+		return 1;
+	} else if (token->token == RW_BOOLEANO) {
+		casaToken(token, RW_BOOLEANO);
+		return 1;
+	} else if (token->token == RW_ARRANJO) {
+		casaToken(token, RW_ARRANJO);
+		casaToken(token, OP_ABRE_COLCHETE);
+		casaToken(token, NUM);
+		casaToken(token, OP_PONTO);
+		casaToken(token, OP_PONTO);
+		casaToken(token, NUM);
+		casaToken(token, OP_FECHA_COLCHETE);
+		casaToken(token, RW_DE);
+		tipo_padrao();
 		return 1;
 	}
-//folow
-	else if (token->token == OP_DOIS_PONTOS) {
+	//folow ; | )
+	else if (token->token == OP_PONTO_VIRGULA || token->token == OP_FECHA_PARENTESES) {
 		return -1;
 	} else {
 		return -1;
