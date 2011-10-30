@@ -6,8 +6,8 @@ int casaToken(node* tok, int tok_type) {
 		getToken();
 		return 1;
 	} else {
-		cerr << "linha " << linha_atual << ": Esperado" << tokenRep(tok_type)
-				<< "mas o encontrado foi " << tok->value << endl;
+		cerr << "linha " << linha_atual << ": Esperado " << tokenRep(tok_type)
+				<< " mas o encontrado foi " << tok->value << endl;
 		return -1;
 	}
 }
@@ -323,10 +323,10 @@ int programa() {
 		casaToken(token, RW_PROGRAMA);
 		casaToken(token, ID);
 		casaToken(token, OP_PONTO_VIRGULA);
-		//declaracoes();
-		//declaracoes_subprograma();
-		//enunciado_composto();
-		casaToken(token, OP_PONTO); //TODO: nao sei se precisa disso
+		declaracoes();
+		declaracoes_subprograma();
+		enunciado_composto();
+		casaToken(token, OP_PONTO);
 		return 1;
 	}
 	//folow
@@ -342,8 +342,6 @@ int lista_ids() {
 	//<lista_de_ids> --> id | <lista_de_ids'>
 	if (token->token == ID) {
 		casaToken(token, ID);
-		return 1;
-	} else if (token->token == OP_VIRGULA) { //TODO: o first dele tem dois pontos, mas o folow tambem :(
 		lista_ids_l();
 		return 1;
 	}
@@ -450,8 +448,10 @@ int declaracoes_subprograma() {
 	}
 	//folow
 	else if (token->token == RW_INICIO) {
+		cout << "OI :)" << endl;
 		return -1;
 	} else {
+		cout << "OI !!!:) --> "  << tokenRep(token->token)<< endl;
 		return -1;
 	}
 }
@@ -548,12 +548,13 @@ int lista_parametros_l() {
 	}
 }
 int enunciado_composto() {
-	DEBUG(cout<< "<lista_ids_l>" << endl);
+	DEBUG(cout<< "<enunciado_composto>" << endl);
 	//<enunciado_composto> --> inicio <enunciados_opcionais> fim
 	if (token->token == RW_INICIO) {
 		casaToken(token, RW_INICIO);
 		enunciados_opcionais();
 		casaToken(token, RW_FIM);
+		DEBUG(cout<< "< saiu enunciado_composto>" << endl);
 		return 1;
 	}
 	//folow S(<enunciado_composto>) = {funcao | procedimento | inicio | ) | ; | fim | senao | $}
@@ -585,12 +586,10 @@ int enunciados_opcionais() {
 
 int lista_enunciados() {
 	DEBUG(cout<< "<lista_de_enunciados>" << endl);
-//	<lista_de_enunciados> --> <enunciado> | <lista_de_enunciados'>
+//	<lista_de_enunciados> --> <enunciado> <lista_de_enunciados'>
 	if (token->token == ID || token->token == RW_INICIO || token->token == RW_SE
-			|| token->token == RW_ENQUANTO) {
+			|| token->token == RW_ENQUANTO || token->token == OP_PONTO_VIRGULA) {
 		enunciado();
-		return 1;
-	} else if (token->token == OP_PONTO_VIRGULA) {
 		lista_enunciados_l();
 		return -1;
 	}
@@ -603,14 +602,14 @@ int lista_enunciados() {
 }
 int lista_enunciados_l() {
 	DEBUG(cout<< "<lista_de_enunciados_l>" << endl);
-//	<lista_de_enunciados'> -->  ; <enunciado> <lista_de_enunciados'>
+	//	<lista_de_enunciados'> -->  ; <enunciado> <lista_de_enunciados'> | epslon
 	if (token->token == OP_PONTO_VIRGULA) {
 		casaToken(token, OP_PONTO_VIRGULA);
 		enunciado();
 		lista_enunciados_l();
 		return 1;
 	}
-//folow
+	//folow
 	else if (token->token == RW_FIM) {
 		return -1;
 	} else {
@@ -622,7 +621,7 @@ int enunciado() {
 	//	<enunciado> --> id <enunciado'>
 	if (token->token == ID) {
 		casaToken(token, ID);
-		enunciado()
+		enunciado_l();
 		return 1;
 	}
 	//	<enunciado> --> <enunciado_composto>
@@ -677,7 +676,10 @@ int enunciado_l() {
 			|| token->token == RW_SENAO) {
 		return -1;
 	} else {
-		return -1;
+		variavel_l();
+		casaToken(token, OP_RECEBE);
+		expressao();
+		return 1;
 	}
 }
 /*int variavel() {

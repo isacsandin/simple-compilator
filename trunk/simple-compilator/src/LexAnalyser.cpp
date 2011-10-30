@@ -48,7 +48,7 @@ node *getCorrectToken(const char* tok){
 		if(!strcmp(reservadas[i].index,tok)){
 			n = alocaNode();
 			n->token = reservadas[i].token_type;
-			n->value = strdup("");
+			n->value = strdup(tokenRep(reservadas[i].token_type));
 			n->value_int = 0;
 			return n;
 		}

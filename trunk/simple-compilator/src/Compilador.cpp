@@ -33,7 +33,7 @@ int main(int argc,char** argv) {
 	myhash = inithashtab(201);
 
 	getToken();
-	expressao();
+	programa();
 
 	return 0;
 }
