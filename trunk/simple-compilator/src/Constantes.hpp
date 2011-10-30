@@ -45,5 +45,7 @@
 #define OP_PONTO_VIRGULA 339
 #define OP_VIRGULA 340
 #define OP_PONTO 341
+#define DEBUG_SET 1
+#define DEBUG(x) if(DEBUG_SET) x
 
 #endif /* CONSTANTES_HPP_ */

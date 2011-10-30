@@ -23,9 +23,17 @@ int main(int argc,char** argv) {
 				break;
 		}
 	}
+
+
 	file = fopen(input,"r");*/
+
+	DEBUG(cout<< "entrando no programa " << endl);
+
 	file = fopen("teste","r");
-	myhash = inithashtab(20);
+	myhash = inithashtab(201);
+
+	getToken();
+	expressao();
 
 	return 0;
 }
