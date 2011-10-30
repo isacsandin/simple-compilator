@@ -1,1 +1,12 @@
-(3+(5+3)) = 2 
+programa exemplo;
+declare x, y: numerico;
+funcao funcEx (a,b : numerico): numerico;
+inicio
+se b=0 entao funcEx := a
+senao funEx := b
+fim ;
+inicio
+x := 4;
+y := 2;
+funEx(x,y+1)
+fim.
