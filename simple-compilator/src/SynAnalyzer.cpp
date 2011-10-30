@@ -440,18 +440,17 @@ int tipo_padrao() {
 }
 int declaracoes_subprograma() {
 	DEBUG(cout<< "<declaracoes_subprograma>" << endl);
-	// <declaracoes_de_subprogramas> -->  <declaracao_de_subprograma> <declaracoes_de_subprogramas> | epsilon
+	// <declaracoes_de_subprogramas> -->  <declaracao_de_subprograma> ; <declaracoes_de_subprogramas> | epsilon
 	if (token->token == RW_FUNCAO || token->token == RW_PROCEDIMENTO) {
 		declaracao_subprograma();
+		casaToken(token,OP_PONTO_VIRGULA);
 		declaracoes_subprograma();
 		return 1;
 	}
 	//folow
 	else if (token->token == RW_INICIO) {
-		cout << "OI :)" << endl;
 		return -1;
 	} else {
-		cout << "OI !!!:) --> "  << tokenRep(token->token)<< endl;
 		return -1;
 	}
 }
@@ -462,10 +461,11 @@ int declaracao_subprograma() {
 		cabecalho_subprograma();
 		declaracoes();
 		enunciado_composto();
+		DEBUG(cout<< "saiu <declaracao_subprograma>" << endl);
 		return 1;
 	}
 	//folow
-	else if (token->token == RW_INICIO) {
+	else if (token->token == RW_INICIO || token->token == OP_PONTO_VIRGULA ) {
 		return -1;
 	} else {
 		return -1;
@@ -554,7 +554,7 @@ int enunciado_composto() {
 		casaToken(token, RW_INICIO);
 		enunciados_opcionais();
 		casaToken(token, RW_FIM);
-		DEBUG(cout<< "< saiu enunciado_composto>" << endl);
+		DEBUG(cout<< "saiu <enunciado_composto>" << endl);
 		return 1;
 	}
 	//folow S(<enunciado_composto>) = {funcao | procedimento | inicio | ) | ; | fim | senao | $}
@@ -586,14 +586,14 @@ int enunciados_opcionais() {
 
 int lista_enunciados() {
 	DEBUG(cout<< "<lista_de_enunciados>" << endl);
-//	<lista_de_enunciados> --> <enunciado> <lista_de_enunciados'>
+    //	<lista_de_enunciados> --> <enunciado> <lista_de_enunciados'>
 	if (token->token == ID || token->token == RW_INICIO || token->token == RW_SE
 			|| token->token == RW_ENQUANTO || token->token == OP_PONTO_VIRGULA) {
 		enunciado();
 		lista_enunciados_l();
 		return -1;
 	}
-//folow
+	//folow
 	else if (token->token == OP_DOIS_PONTOS) {
 		return -1;
 	} else {
@@ -607,12 +607,15 @@ int lista_enunciados_l() {
 		casaToken(token, OP_PONTO_VIRGULA);
 		enunciado();
 		lista_enunciados_l();
+		DEBUG(cout<< "saiu <lista_de_enunciados_l>" << endl);
 		return 1;
 	}
 	//folow
-	else if (token->token == RW_FIM) {
+	else if (token->token == RW_FIM || token->token == OP_FECHA_PARENTESES) {
+		DEBUG(cout<< "saiu <lista_de_enunciados_l> flow " << tokenRep(token->token) << endl);
 		return -1;
 	} else {
+		DEBUG(cout<< "saiu <lista_de_enunciados_l> epslon" << endl);
 		return -1;
 	}
 }
