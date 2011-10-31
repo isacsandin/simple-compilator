@@ -1,8 +1,7 @@
-#ifndef GLOBALS_HPP_
-#define GLOBALS_HPP_
-
-hashtab *myhash = NULL;
-FILE *file = NULL;
-node *token = NULL;
-
-#endif /* GLOBALS_HPP_ */
+/*
+variaveis globais
+*/
+extern hashtab *myhash;
+extern FILE *file;
+extern node *token;
+extern int linha_atual;

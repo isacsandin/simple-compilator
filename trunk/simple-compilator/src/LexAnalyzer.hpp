@@ -9,14 +9,9 @@
 #include "Hash.hpp"
 #include "Utils.hpp"
 #include "Constantes.hpp"
+#include "Globals.hpp"
 
 using namespace std;
-
-static int linha_atual=1;
-
-extern hashtab *myhash;
-extern FILE *file;
-extern node *token;
 
 int get();
 int unget(char c);

@@ -12,46 +12,84 @@ int casaToken(node* tok, int tok_type) {
 	}
 }
 
+int sync(set<int> syncset) {
+
+	while (syncset.find(token->token) == syncset.end() || token->token != EOF) {
+		getToken();
+	}
+	if (token->token == EOF
+	)
+		exit(1);
+	else
+		return 1;
+}
+
+void mensagem_erro(set<int> esperados, int encontado) {
+	set<int>::const_iterator it = esperados.begin();
+	cerr << "Esperado ";
+	while (it != esperados.end()) {
+		cerr << tokenRep(*it) << ",";
+	}
+	cerr << "mas o encontrado foi " << tokenRep(encontado) << endl;
+}
+
 int expressao() {
 	DEBUG(cout<< "entrou <expressao>" << endl);
 	//<expressao> --> <expressao_simples> <expressao'>
 	if (token->token == ID || token->token == NUM
-			|| token->token == OP_ABRE_PARENTESES || token->token == OP_VEZES
-			|| token->token == OP_DIVIDIDO || token->token == OP_MENOR
-			|| token->token == OP_MAIOR || token->token == OP_IGUAL) {
-
+			|| token->token == OP_ABRE_PARENTESES) {
 		expressao_simples();
 		expressao_l();
 		DEBUG(cout<< "saiu <expressao>" << endl);
 		return 1;
+		// entao | faca | ;   | fim | senao| ] | , | )
 	} else if (token->token == OP_PONTO_VIRGULA || token->token == RW_FIM
 			|| token->token == RW_SENAO || token->token == RW_ENTAO
 			|| token->token == RW_FACA || token->token == OP_FECHA_COLCHETE
 			|| token->token == OP_FECHA_PARENTESES
 			|| token->token == OP_VIRGULA) {
+		//cerr << "Esperado " << tokenRep(ID) << "," << tokenRep(NUM) << endl;
 		return -1;
+	} else {
+		cerr << " condicao de erro fatal em <expressao>" << endl;
+		exit(1);
 	}
-	return -1;
 }
 
 int expressao_l() {
 	DEBUG(cout<< "<expressao_l>" << endl);
-	//<expressao'> --> < <expressao'''>
-	//		| > <expressao''>
-	//		| = <expressao_simples>
-	//		| epsilon
+	//	<expressao'> --> < <expressao_simples>
+	//			| > <expressao_simples>
+	//			| <= <expressao_simples>
+	//			| >= <expressao_simples>
+	//			| = <expressao_simples>
+	//			| <> <expressao_simples>
+	//			| epsilon
 	if (token->token == OP_MENOR) {
 		casaToken(token, OP_MENOR);
-		expressao_lll();
+		expressao_simples();
 		return 1;
 	} else if (token->token == OP_MAIOR) {
 		casaToken(token, OP_MAIOR);
-		expressao_ll();
+		expressao_simples();
+		return 1;
+	} else if (token->token == OP_MENOR_IGUAL) {
+		casaToken(token, OP_MENOR_IGUAL);
+		expressao_simples();
+		return 1;
+	} else if (token->token == OP_MAIOR_IGUAL) {
+		casaToken(token, OP_MAIOR_IGUAL);
+		expressao_simples();
 		return 1;
 	} else if (token->token == OP_IGUAL) {
 		casaToken(token, OP_IGUAL);
 		expressao_simples();
 		return 1;
+	} else if (token->token == OP_DIFERENTE) {
+		casaToken(token, OP_DIFERENTE);
+		expressao_simples();
+		return 1;
+		// entao | faca | ;   | fim | senao| ] | , | )
 	} else if (token->token == OP_PONTO_VIRGULA || token->token == RW_FIM
 			|| token->token == RW_SENAO || token->token == RW_ENTAO
 			|| token->token == RW_FACA || token->token == OP_FECHA_COLCHETE
@@ -59,119 +97,56 @@ int expressao_l() {
 			|| token->token == OP_VIRGULA) {
 		return -1;
 	} else {
-		return -1;
+		return 1;
 	}
-}
-
-int expressao_ll() {
-	DEBUG(cout<< "<expressao_ll>" << endl);
-	//<expressao''> --> = <expressao_simples> | <expressao_simples>
-	if (token->token == ID || token->token == NUM
-			|| token->token == OP_ABRE_PARENTESES || token->token == OP_VEZES
-			|| token->token == OP_DIVIDIDO || token->token == OP_MENOR
-			|| token->token == OP_MAIOR || token->token == OP_IGUAL) {
-
-		if (token->token == OP_IGUAL) {
-			casaToken(token, OP_IGUAL);
-			expressao_simples();
-			return 1;
-		} else {
-			expressao_simples();
-			return 1;
-		}
-	} else if (token->token == OP_PONTO_VIRGULA || token->token == RW_FIM
-			|| token->token == RW_SENAO || token->token == RW_ENTAO
-			|| token->token == RW_FACA || token->token == OP_FECHA_COLCHETE
-			|| token->token == OP_FECHA_PARENTESES
-			|| token->token == OP_VIRGULA) {
-		return -1;
-	}
-	return -1;
-}
-int expressao_lll() {
-	DEBUG(cout<< "<expressao_lll>" << endl);
-	//<expressao'''> --> = <expressao_simples> | > <expressao_simples> | <expressao_simples>
-	if (token->token == ID || token->token == NUM
-			|| token->token == OP_ABRE_PARENTESES || token->token == OP_VEZES
-			|| token->token == OP_DIVIDIDO || token->token == OP_MENOR
-			|| token->token == OP_MAIOR || token->token == OP_IGUAL) {
-
-		if (token->token == OP_IGUAL) {
-			casaToken(token, OP_IGUAL);
-			expressao_simples();
-			return 1;
-		} else if (token->token == OP_MAIOR) {
-			casaToken(token, OP_MAIOR);
-			expressao_simples();
-			return 1;
-		} else {
-			expressao_simples();
-			return 1;
-		}
-	} else if (token->token == OP_PONTO_VIRGULA || token->token == RW_FIM
-			|| token->token == RW_SENAO || token->token == RW_ENTAO
-			|| token->token == RW_FACA || token->token == OP_FECHA_COLCHETE
-			|| token->token == OP_FECHA_PARENTESES
-			|| token->token == OP_VIRGULA) {
-		return -1;
-	}
-	return -1;
 }
 
 int expressao_simples() {
 	DEBUG(cout<< "<expressao_simples>" << endl);
-	//<expressao_simples> --> <termo> | <expressao_simples'>
-	//TODO oops nem todos os caras desse first sao first dos caras das regras
+	//<expressao_simples> --> <termo> <expressao_simples'>
 	if (token->token == ID || token->token == NUM
-			|| token->token == OP_ABRE_PARENTESES || token->token == OP_VEZES
-			|| token->token == OP_DIVIDIDO || token->token == OP_MENOR
-			|| token->token == OP_MAIOR || token->token == OP_IGUAL) {
+			|| token->token == OP_ABRE_PARENTESES) {
+		termo();
+		expressao_simples_l();
+		return 1;
+		//< | > | <=  | >= | = | <>  | entao | faca | ; | fim | senao| ] | , | )
+	} else if (token->token == OP_PONTO_VIRGULA || token->token == RW_FIM
+			|| token->token == RW_SENAO || token->token == RW_ENTAO
+			|| token->token == RW_FACA || token->token == OP_FECHA_COLCHETE
+			|| token->token == OP_FECHA_PARENTESES || token->token == OP_VIRGULA
+			|| token->token == OP_MENOR || token->token == OP_MAIOR
+			|| token->token == OP_MENOR_IGUAL || token->token == OP_MAIOR_IGUAL
+			|| token->token == OP_IGUAL || token->token == OP_DIFERENTE) {
+		return -1;
+	}
+	cerr << " condicao de erro fatal em <expressao_simples>" << endl;
+	exit(1);
+}
 
-//		if (token->token == ID || token->token == NUM
-//				|| token->token == OP_ABRE_PARENTESES
-//				|| token->token == OP_VEZES || token->token == OP_DIVIDIDO) { // first <termo>
-//			termo();
-//			return 1;
-//		} else if (token->token == OP_MENOS || token->token == OP_MAIS) { // first <expressao_simples'>
-//			expressao_simples_l();
-//			return 1;
-//		}
+int expressao_simples_l() {
+	DEBUG(cout<< "<expressao_siples_l>" << endl);
+	//<expressao_simples'> --> + <termo> <expressao_simples'> | - <termo> <expressao_simples'> | epsilon
+	if (token->token == OP_MAIS) {
+		casaToken(token, OP_MAIS);
+		termo();
+		expressao_simples_l();
+		return 1;
+	} else if (token->token == OP_MENOS) {
+		casaToken(token, OP_MENOS);
 		termo();
 		expressao_simples_l();
 		return 1;
 	} else if (token->token == OP_PONTO_VIRGULA || token->token == RW_FIM
 			|| token->token == RW_SENAO || token->token == RW_ENTAO
 			|| token->token == RW_FACA || token->token == OP_FECHA_COLCHETE
-			|| token->token == OP_FECHA_PARENTESES
-			|| token->token == OP_VIRGULA) {
+			|| token->token == OP_FECHA_PARENTESES || token->token == OP_VIRGULA
+			|| token->token == OP_MENOR || token->token == OP_MAIOR
+			|| token->token == OP_MENOR_IGUAL || token->token == OP_MAIOR_IGUAL
+			|| token->token == OP_IGUAL || token->token == OP_DIFERENTE) {
 		return -1;
 	}
-	return -1;
-}
-
-int expressao_simples_l() {
-	DEBUG(cout<< "<expressao_siples_l>" << endl);
-	//<expressao_simples'> --> + <termo> <expressao_simples'> | - <termo> <expressao_simples'>
-	if (token->token == OP_MAIS || token->token == OP_MENOS) {
-		if (token->token == OP_MAIS) {
-			casaToken(token, OP_MAIS);
-			termo();
-			expressao_simples_l();
-			return 1;
-		} else if (token->token == OP_MENOS) {
-			casaToken(token, OP_MENOS);
-			termo();
-			expressao_simples_l();
-			return 1;
-		}
-	} else if (token->token == OP_PONTO_VIRGULA || token->token == RW_FIM
-			|| token->token == RW_SENAO || token->token == RW_ENTAO
-			|| token->token == RW_FACA || token->token == OP_FECHA_COLCHETE
-			|| token->token == OP_FECHA_PARENTESES
-			|| token->token == OP_VIRGULA) {
-		return -1;
-	}
-	return -1;
+	else
+		return 1;
 }
 
 int fator() {
@@ -190,12 +165,15 @@ int fator() {
 		casaToken(token, OP_FECHA_PARENTESES);
 		return 1;
 	}
-	//folow
+	//folow // * | / |  + | - | < | > | <=  | >= | = | <>  | entao | faca | ; | fim | senao| ] | , | )
 	else if (token->token == OP_PONTO_VIRGULA || token->token == RW_FIM
 			|| token->token == RW_SENAO || token->token == RW_ENTAO
 			|| token->token == RW_FACA || token->token == OP_FECHA_COLCHETE
-			|| token->token == OP_FECHA_PARENTESES
-			|| token->token == OP_VIRGULA) {
+			|| token->token == OP_FECHA_PARENTESES || token->token == OP_VIRGULA
+			|| token->token == OP_MENOR || token->token == OP_MAIOR
+			|| token->token == OP_MENOR_IGUAL || token->token == OP_MAIOR_IGUAL
+			|| token->token == OP_IGUAL || token->token == OP_DIFERENTE || token->token == OP_MENOS
+			|| token->token == OP_MAIS || token->token == OP_DIVIDIDO || token->token == OP_VEZES) {
 		return -1;
 	} else {
 		return -1;
@@ -441,7 +419,7 @@ int declaracoes_subprograma() {
 	// <declaracoes_de_subprogramas> -->  <declaracao_de_subprograma> ; <declaracoes_de_subprogramas> | epsilon
 	if (token->token == RW_FUNCAO || token->token == RW_PROCEDIMENTO) {
 		declaracao_subprograma();
-		casaToken(token,OP_PONTO_VIRGULA);
+		casaToken(token, OP_PONTO_VIRGULA);
 		declaracoes_subprograma();
 		return 1;
 	}
@@ -463,7 +441,7 @@ int declaracao_subprograma() {
 		return 1;
 	}
 	//folow
-	else if (token->token == RW_INICIO || token->token == OP_PONTO_VIRGULA ) {
+	else if (token->token == RW_INICIO || token->token == OP_PONTO_VIRGULA) {
 		return -1;
 	} else {
 		return -1;
@@ -586,9 +564,8 @@ int enunciados_opcionais() {
 
 int lista_enunciados() {
 	DEBUG(cout<< "<lista_de_enunciados>" << endl);
-    //	<lista_de_enunciados> --> <enunciado> <lista_de_enunciados'>
-	if (token->token == ID || token->token == RW_INICIO || token->token == RW_SE
-			|| token->token == RW_ENQUANTO) {
+	//	<lista_de_enunciados> --> <enunciado> <lista_de_enunciados'>
+	if (token->token == ID || token->token == RW_INICIO || token->token == RW_SE){
 		enunciado();
 		lista_enunciados_l();
 		return -1;
@@ -613,7 +590,8 @@ int lista_enunciados_l() {
 	}
 	//folow
 	else if (token->token == RW_FIM) {
-		DEBUG(cout<< "saiu <lista_de_enunciados_l> flow " << tokenRep(token->token) << endl);
+		DEBUG(
+				cout<< "saiu <lista_de_enunciados_l> flow " << tokenRep(token->token) << endl);
 		return -1;
 	} else {
 		DEBUG(cout<< "saiu <lista_de_enunciados_l> epsilon" << endl);
@@ -651,7 +629,7 @@ int enunciado() {
 		enunciado();
 		return 1;
 	}
-//folow
+	//folow
 	else if (token->token == OP_PONTO_VIRGULA || token->token == RW_FIM
 			|| token->token == RW_SENAO) {
 		return -1;
@@ -683,20 +661,20 @@ int enunciado_l() {
 	}
 }
 /*int variavel() {
-	DEBUG(cout<< "<variavel>" << endl);
-//	<variavel> --> id <variavel'>
-	if (token->token == ID) {
-		casaToken(token, ID);
-		variavel_l();
-		return 1;
-	}
-//folow
-	else if (token->token == OP_DOIS_PONTOS) {
-		return -1;
-	} else {
-		return -1;
-	}
-}*/
+ DEBUG(cout<< "<variavel>" << endl);
+ //	<variavel> --> id <variavel'>
+ if (token->token == ID) {
+ casaToken(token, ID);
+ variavel_l();
+ return 1;
+ }
+ //folow
+ else if (token->token == OP_DOIS_PONTOS) {
+ return -1;
+ } else {
+ return -1;
+ }
+ }*/
 int variavel_l() {
 	DEBUG(cout<< "<variavel'>" << endl);
 //	<variavel'> --> [ <expressao> ] | epsilon
@@ -714,22 +692,22 @@ int variavel_l() {
 	}
 }
 /*int chamada_procedimento() {
-	DEBUG(cout<< "<chamada_de_procedimento>" << endl);
-//	<chamada_de_procedimento> --> id <chamada_de_procedimento'>
-	if (token->token == ID) {
-		casaToken(token, ID);
-		chamada_procedimento_l();
-		return 1;
-	}
-//folow
-	else if (token->token == OP_PONTO_VIRGULA || token->token == RW_FIM
-			|| token->token == RW_SENAO
-			|| token->token == OP_FECHA_PARENTESES) {
-		return -1;
-	} else {
-		return -1;
-	}
-}*/
+ DEBUG(cout<< "<chamada_de_procedimento>" << endl);
+ //	<chamada_de_procedimento> --> id <chamada_de_procedimento'>
+ if (token->token == ID) {
+ casaToken(token, ID);
+ chamada_procedimento_l();
+ return 1;
+ }
+ //folow
+ else if (token->token == OP_PONTO_VIRGULA || token->token == RW_FIM
+ || token->token == RW_SENAO
+ || token->token == OP_FECHA_PARENTESES) {
+ return -1;
+ } else {
+ return -1;
+ }
+ }*/
 int chamada_procedimento_l() {
 	DEBUG(cout<< "<chamada_de_procedimento_l>" << endl);
 //  <chamada_de_procedimento'> --> ( <lista_de_expressoes> ) | epsilon
