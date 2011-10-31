@@ -12,8 +12,9 @@
 #include "Globals.hpp"
 #include "SynAnalyzer.hpp"
 
-extern hashtab *myhash;
-extern FILE *file;
-extern node *token;
+hashtab *myhash = NULL;
+FILE *file = NULL;
+node *token = NULL;
+int linha_atual = 1;
 
 #endif /* COMPILADOR_HPP_ */

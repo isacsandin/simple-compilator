@@ -4,16 +4,12 @@
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
+#include <set>
 #include "Hash.hpp"
 #include "Utils.hpp"
 #include "LexAnalyzer.hpp"
 #include "Constantes.hpp"
-//#include "Globals.hpp"
-
-extern hashtab *myhash;
-extern FILE *file;
-extern node *token;;
-
+#include "Globals.hpp"
 
 int casaToken(node *tok,int tok_type);
 int expressao();
@@ -50,6 +46,9 @@ int variavel();
 int variavel_l();
 int chamada_procedimento();
 int chamada_procedimento_l();
+
+void mensagem_erro(set<int> esperados,int encontado);
+int sync(set<int> syncset);
 
 
 #endif /* SYNANALYZER_HPP_ */
