@@ -516,7 +516,7 @@ int lista_parametros() {
 		return -1;
 	} else {
 		cerr << " condicao de erro fatal em <lista_parametros> " << endl;
-		return -1;
+		exit(1);
 	}
 }
 int lista_parametros_l() {
@@ -551,7 +551,7 @@ int enunciado_composto() {
 		return -1;
 	} else {
 		cerr << " condicao de erro fatal em <enunciado_composto> " << endl;
-		return -1;
+		exit(1);
 	}
 }
 int enunciados_opcionais() {
@@ -584,7 +584,7 @@ int lista_enunciados() {
 		return -1;
 	}else {
 		cerr << " condicao de erro faltal em <lista_de_enunciados> " << endl;
-		return -1;
+		exit(1);
 	}
 }
 int lista_enunciados_l() {
@@ -618,10 +618,13 @@ int enunciado() {
 	}
 	//	<enunciado> --> se <expressao> entao <enunciado> senao <enunciado>
 	else if (token->token == RW_SE) {
+		DEBUG(cout<< "<se>" << endl);
 		casaToken(token, RW_SE);
 		expressao();
+		DEBUG(cout<< "<entao>" << endl);
 		casaToken(token, RW_ENTAO);
 		enunciado();
+		DEBUG(cout<< "<senao>" << endl);
 		casaToken(token, RW_SENAO);
 		enunciado();
 		return 1;
@@ -640,7 +643,7 @@ int enunciado() {
 		return -1;
 	} else {
 		cerr << " condicao de erro faltal em <enunciado> " << endl;
-		return -1;
+		exit(1);
 	}
 }
 int enunciado_l() {
