@@ -6,8 +6,6 @@ declare x, y: numerico;
 {funcoes}
 funcao funcEx (a , b : numerico): numerico;
 inicio
-a := b;
-b := ; 
 se b=0 entao funcEx := a
 senao funEx := b
 fim ;
