@@ -618,13 +618,10 @@ int enunciado() {
 	}
 	//	<enunciado> --> se <expressao> entao <enunciado> senao <enunciado>
 	else if (token->token == RW_SE) {
-		DEBUG(cout<< "<se>" << endl);
 		casaToken(token, RW_SE);
 		expressao();
-		DEBUG(cout<< "<entao>" << endl);
 		casaToken(token, RW_ENTAO);
 		enunciado();
-		DEBUG(cout<< "<senao>" << endl);
 		casaToken(token, RW_SENAO);
 		enunciado();
 		return 1;
@@ -649,6 +646,7 @@ int enunciado() {
 int enunciado_l() {
 	DEBUG(cout<< "<enunciado_l>" << endl);
 	//	<enunciado'> --> <variavel'> := <expressao>
+	cout << tokenRep(token->token) << endl;
 	if (token->token == OP_ABRE_COLCHETE) {
 		variavel_l();
 		casaToken(token, OP_RECEBE);
@@ -665,6 +663,8 @@ int enunciado_l() {
 			|| token->token == RW_SENAO) {
 		return -1;
 	} else {
+		casaToken(token, OP_RECEBE);
+		expressao();
 		return 1;
 	}
 }
