@@ -136,6 +136,7 @@ int expressao_simples_l() {
 		termo();
 		expressao_simples_l();
 		return 1;
+		//< | > | <=  | >= | = | <>  | entao | faca | ; | fim | senao| ] | , | )
 	} else if (token->token == OP_PONTO_VIRGULA || token->token == RW_FIM
 			|| token->token == RW_SENAO || token->token == RW_ENTAO
 			|| token->token == RW_FACA || token->token == OP_FECHA_COLCHETE
@@ -144,8 +145,7 @@ int expressao_simples_l() {
 			|| token->token == OP_MENOR_IGUAL || token->token == OP_MAIOR_IGUAL
 			|| token->token == OP_IGUAL || token->token == OP_DIFERENTE) {
 		return -1;
-	}
-	else
+	} else
 		return 1;
 }
 
@@ -172,8 +172,9 @@ int fator() {
 			|| token->token == OP_FECHA_PARENTESES || token->token == OP_VIRGULA
 			|| token->token == OP_MENOR || token->token == OP_MAIOR
 			|| token->token == OP_MENOR_IGUAL || token->token == OP_MAIOR_IGUAL
-			|| token->token == OP_IGUAL || token->token == OP_DIFERENTE || token->token == OP_MENOS
-			|| token->token == OP_MAIS || token->token == OP_DIVIDIDO || token->token == OP_VEZES) {
+			|| token->token == OP_IGUAL || token->token == OP_DIFERENTE
+			|| token->token == OP_MENOS || token->token == OP_MAIS
+			|| token->token == OP_DIVIDIDO || token->token == OP_VEZES) {
 		return -1;
 	} else {
 		return -1;
@@ -189,12 +190,16 @@ int fator_l() {
 		casaToken(token, OP_FECHA_PARENTESES);
 		return 1;
 	}
-	//folow
+	// * | / |  + | - | < | > | <=  | >= | = | <> | entao | faca | ; | fim | senao| ] | , | )
 	else if (token->token == OP_PONTO_VIRGULA || token->token == RW_FIM
 			|| token->token == RW_SENAO || token->token == RW_ENTAO
 			|| token->token == RW_FACA || token->token == OP_FECHA_COLCHETE
 			|| token->token == OP_FECHA_PARENTESES || token->token == OP_VIRGULA
-			|| token->token == OP_MAIS || token->token == OP_MENOS) {
+			|| token->token == OP_MENOR || token->token == OP_MAIOR
+			|| token->token == OP_MENOR_IGUAL || token->token == OP_MAIOR_IGUAL
+			|| token->token == OP_IGUAL || token->token == OP_DIFERENTE
+			|| token->token == OP_MENOS || token->token == OP_MAIS
+			|| token->token == OP_DIVIDIDO || token->token == OP_VEZES) {
 		return -1;
 	}
 
@@ -205,30 +210,32 @@ int fator_l() {
 
 int termo() {
 	DEBUG(cout<< "<termo>" << endl);
-	//<termo> --> <fator> | <termo'>
+	//<termo> --> <fator> <termo'>
 	if (token->token == ID || token->token == NUM
 			|| token->token == OP_ABRE_PARENTESES) {
 		fator();
-		return 1;
-	} else if (token->token == OP_VEZES || token->token == OP_DIVIDIDO) {
 		termo_l();
 		return 1;
 	}
-	//folow
+	// + | - | < | > | <=  | >= | = | <>  | entao | faca | ; | fim | senao| ] | , | )
 	else if (token->token == OP_PONTO_VIRGULA || token->token == RW_FIM
 			|| token->token == RW_SENAO || token->token == RW_ENTAO
 			|| token->token == RW_FACA || token->token == OP_FECHA_COLCHETE
 			|| token->token == OP_FECHA_PARENTESES || token->token == OP_VIRGULA
-			|| token->token == OP_MAIS || token->token == OP_MENOS) {
+			|| token->token == OP_MENOR || token->token == OP_MAIOR
+			|| token->token == OP_MENOR_IGUAL || token->token == OP_MAIOR_IGUAL
+			|| token->token == OP_IGUAL || token->token == OP_DIFERENTE
+			|| token->token == OP_MENOS || token->token == OP_MAIS) {
 		return -1;
 	} else {
-		return -1;
+		cerr << " condicao de erro fatal em <termo>" << endl;
+		exit(1);
 	}
 }
 
 int termo_l() {
 	DEBUG(cout<< "<termo_l>" << endl);
-	//<termo'> -->  * <fator> <termo'> | / <fator> <termo'>
+	//<termo'> -->  * <fator> <termo'> | / <fator> <termo'> | epsilon
 	if (token->token == OP_VEZES) {
 		casaToken(token, OP_VEZES);
 		fator();
@@ -240,51 +247,49 @@ int termo_l() {
 		termo_l();
 		return 1;
 	}
-	//folow
+	// + | - | < | > | <=  | >= | = | <>  | entao | faca | ; | fim | senao| ] | , | )
 	else if (token->token == OP_PONTO_VIRGULA || token->token == RW_FIM
 			|| token->token == RW_SENAO || token->token == RW_ENTAO
 			|| token->token == RW_FACA || token->token == OP_FECHA_COLCHETE
 			|| token->token == OP_FECHA_PARENTESES || token->token == OP_VIRGULA
-			|| token->token == OP_MAIS || token->token == OP_MENOS) {
+			|| token->token == OP_MENOR || token->token == OP_MAIOR
+			|| token->token == OP_MENOR_IGUAL || token->token == OP_MAIOR_IGUAL
+			|| token->token == OP_IGUAL || token->token == OP_DIFERENTE
+			|| token->token == OP_MENOS || token->token == OP_MAIS) {
 		return -1;
 	} else {
-		return -1;
+		return 1;
 	}
 }
 
 int lista_expressoes() {
 	DEBUG(cout<< "<lista_expressoes>" << endl);
-	//<lista_de_expressoes> --> <expressao> | <lista_de_expressoes'>
+	//<lista_de_expressoes> --> <expressao> <lista_de_expressoes'>
 	if (token->token == ID || token->token == NUM
-			|| token->token == OP_ABRE_PARENTESES || token->token == OP_VEZES
-			|| token->token == OP_DIVIDIDO || token->token == OP_MENOR
-			|| token->token == OP_MAIOR || token->token == OP_RECEBE) {
+			|| token->token == OP_ABRE_PARENTESES) {
 		expressao();
 		lista_expressoes_l();
 		return 1;
 	}
-	//folow
-	else if (token->token == OP_PONTO_VIRGULA || token->token == RW_FIM
-			|| token->token == RW_SENAO || token->token == RW_ENTAO
-			|| token->token == RW_FACA || token->token == OP_FECHA_COLCHETE
-			|| token->token == OP_FECHA_PARENTESES || token->token == OP_VIRGULA
-			|| token->token == OP_MAIS || token->token == OP_MENOS) {
+	// )
+	else if (token->token == OP_FECHA_PARENTESES) {
 		return -1;
 	} else {
-		return -1;
+		cerr << " condicao de erro fatal em <termo>" << endl;
+		exit(1);
 	}
 }
 
 int lista_expressoes_l() {
 	DEBUG(cout<< "<lista_expressoes_l>" << endl);
-	//<lista_de_expressoes'> --> , <expressao> <lista_de_expressoes> | epsilon
+	//<lista_de_expressoes'> --> , <expressao> <lista_de_expressoes'> | epsilon
 	if (token->token == OP_VIRGULA) {
 		casaToken(token, OP_VIRGULA);
 		expressao();
-		lista_expressoes();
+		lista_expressoes_l();
 		return 1;
 	}
-	//folow
+	// )
 	else if (token->token == OP_FECHA_PARENTESES) {
 		return -1;
 	} else {
@@ -309,13 +314,14 @@ int programa() {
 	else if (token->token == EOF) {
 		return -1;
 	} else {
-		return -1;
+		cerr << " condicao de erro fatal em <termo>" << endl;
+		exit(1);
 	}
 }
 
 int lista_ids() {
 	DEBUG(cout<< "<lista_ids>" << endl);
-	//<lista_de_ids> --> id | <lista_de_ids'>
+	//<lista_de_ids> --> id <lista_de_ids'>
 	if (token->token == ID) {
 		casaToken(token, ID);
 		lista_ids_l();
@@ -325,24 +331,25 @@ int lista_ids() {
 	else if (token->token == OP_DOIS_PONTOS) {
 		return -1;
 	} else {
-		return -1;
+		cerr << " condicao de erro fatal em <lista_ids>" << endl;
+		exit(1);
 	}
 }
 
 int lista_ids_l() {
 	DEBUG(cout<< "<lista_ids_l>" << endl);
-	//<lista_de_ids'> --> , id <lista_de_ids> | epsilon
+	//<lista_de_ids'> --> , id <lista_de_ids'> | epsilon
 	if (token->token == OP_VIRGULA) {
 		casaToken(token, OP_VIRGULA);
 		casaToken(token, ID);
-		lista_ids();
+		lista_ids_l();
 		return 1;
 	}
-	//folow
+	// :
 	else if (token->token == OP_DOIS_PONTOS) {
 		return -1;
 	} else {
-		return -1;
+		return 1;
 	}
 }
 
@@ -358,18 +365,18 @@ int declaracoes() {
 		declaracoes();
 		return 1;
 	}
-	//S(<declaracoes>) = {declare | inicio | funcao | procedimento}
+	// funcao | procedimento  | inicio
 	else if (token->token == RW_INICIO || token->token == RW_FUNCAO
 			|| token->token == RW_PROCEDIMENTO) {
 		return -1;
 	} else {
-		return -1;
+		return 1;
 	}
 }
 
 int tipo() {
 	DEBUG(cout<< "<tipo>" << endl);
-	//<tipo_padrao> | arranjo [ num .. num ] de <tipo_padrao>
+	//<tipo> --> <tipo_padrao> | arranjo [ num .. num ] de <tipo_padrao>
 	if (token->token == RW_NUMERICO) {
 		casaToken(token, RW_NUMERICO);
 		return 1;
@@ -388,12 +395,13 @@ int tipo() {
 		tipo_padrao();
 		return 1;
 	}
-	//folow
-	else if (token->token == OP_PONTO_VIRGULA
+	// ; | ,  | )
+	else if (token->token == OP_PONTO_VIRGULA || token->token == OP_VIRGULA
 			|| token->token == OP_FECHA_PARENTESES) {
 		return -1;
 	} else {
-		return -1;
+		cerr << " condicao de erro fatal em <tipo>" << endl;
+		exit(1);
 	}
 }
 int tipo_padrao() {
@@ -406,12 +414,13 @@ int tipo_padrao() {
 		casaToken(token, RW_BOOLEANO);
 		return 1;
 	}
-	//folow
-	else if (token->token == OP_PONTO_VIRGULA
+	// ; | ,  | )
+	else if (token->token == OP_PONTO_VIRGULA || token->token == OP_VIRGULA
 			|| token->token == OP_FECHA_PARENTESES) {
 		return -1;
 	} else {
-		return -1;
+		cerr << " condicao de erro fatal em <tipo_padrao>" << endl;
+		exit(1);
 	}
 }
 int declaracoes_subprograma() {
@@ -427,7 +436,7 @@ int declaracoes_subprograma() {
 	else if (token->token == RW_INICIO) {
 		return -1;
 	} else {
-		return -1;
+		return 1;
 	}
 }
 int declaracao_subprograma() {
@@ -440,16 +449,17 @@ int declaracao_subprograma() {
 		DEBUG(cout<< "saiu <declaracao_subprograma>" << endl);
 		return 1;
 	}
-	//folow
-	else if (token->token == RW_INICIO || token->token == OP_PONTO_VIRGULA) {
+	// ;
+	else if (token->token == OP_PONTO_VIRGULA) {
 		return -1;
 	} else {
-		return -1;
+		cerr << " condicao de erro fatal em <declaracao_subprograma>" << endl;
+		exit(1);
 	}
 }
 int cabecalho_subprograma() {
 	DEBUG(cout<< "<cabecalho_subprograma>" << endl);
-	//<cabecalho_de_subprograma> --> funcao id <argumentos> : <tipo_padrao> ;
+	//<cabecalho_de_subprograma> --> funcao id <argumentos> : <tipo_padrao> ; | procedimento id <argumentos> ;
 	if (token->token == RW_FUNCAO) {
 		casaToken(token, RW_FUNCAO);
 		casaToken(token, ID);
@@ -459,7 +469,6 @@ int cabecalho_subprograma() {
 		casaToken(token, OP_PONTO_VIRGULA);
 		return 1;
 	}
-	//procedimento id <argumentos> ;
 	else if (token->token == RW_PROCEDIMENTO) {
 		casaToken(token, RW_PROCEDIMENTO);
 		casaToken(token, ID);
@@ -471,8 +480,8 @@ int cabecalho_subprograma() {
 	else if (token->token == RW_DECLARE) {
 		return -1;
 	} else {
-		cerr << " condicao de erro faltam em <cabecalho_subprograma> " << endl;
-		return -1;
+		cerr << " condicao de erro fatal em <declaracao_subprograma>" << endl;
+		exit(1);
 	}
 }
 int argumentos() {
@@ -484,7 +493,7 @@ int argumentos() {
 		casaToken(token, OP_FECHA_PARENTESES);
 		return 1;
 	}
-	//folow
+	// : | ;
 	else if (token->token == OP_DOIS_PONTOS
 			|| token->token == OP_PONTO_VIRGULA) {
 		return -1;
@@ -494,7 +503,7 @@ int argumentos() {
 }
 int lista_parametros() {
 	DEBUG(cout<< "<lista_parametros>" << endl);
-	//<lista_de_parametros> --> <lista_de_ids> : <tipo>  <lista_de_parametros'>
+	//<lista_de_parametros> --> <lista_de_ids> : <tipo> <lista_de_parametros'>
 	if (token->token == ID) {
 		lista_ids();
 		casaToken(token, OP_DOIS_PONTOS);
@@ -506,7 +515,7 @@ int lista_parametros() {
 	else if (token->token == OP_FECHA_PARENTESES) {
 		return -1;
 	} else {
-		cerr << " condicao de erro faltam em <lista_parametros> " << endl;
+		cerr << " condicao de erro fatal em <lista_parametros> " << endl;
 		return -1;
 	}
 }
@@ -534,15 +543,14 @@ int enunciado_composto() {
 		casaToken(token, RW_INICIO);
 		enunciados_opcionais();
 		casaToken(token, RW_FIM);
-		DEBUG(cout<< "saiu <enunciado_composto>" << endl);
 		return 1;
 	}
-	//folow
+	// . | ;   | fim | senao
 	else if (token->token == OP_PONTO_VIRGULA || token->token == RW_FIM
 			|| token->token == RW_SENAO || token->token == OP_PONTO) {
 		return -1;
 	} else {
-		cerr << " condicao de erro faltam em <enunciado_composto> " << endl;
+		cerr << " condicao de erro fatal em <enunciado_composto> " << endl;
 		return -1;
 	}
 }
@@ -565,7 +573,8 @@ int enunciados_opcionais() {
 int lista_enunciados() {
 	DEBUG(cout<< "<lista_de_enunciados>" << endl);
 	//	<lista_de_enunciados> --> <enunciado> <lista_de_enunciados'>
-	if (token->token == ID || token->token == RW_INICIO || token->token == RW_SE){
+	if (token->token == ID || token->token == RW_INICIO
+			|| token->token == RW_SE || token->token == RW_ENQUANTO) {
 		enunciado();
 		lista_enunciados_l();
 		return -1;
@@ -573,8 +582,8 @@ int lista_enunciados() {
 	//folow
 	else if (token->token == RW_FIM) {
 		return -1;
-	} else {
-		cerr << " condicao de erro faltam em <lista_de_enunciados> " << endl;
+	}else {
+		cerr << " condicao de erro faltal em <lista_de_enunciados> " << endl;
 		return -1;
 	}
 }
@@ -585,16 +594,12 @@ int lista_enunciados_l() {
 		casaToken(token, OP_PONTO_VIRGULA);
 		enunciado();
 		lista_enunciados_l();
-		DEBUG(cout<< "saiu <lista_de_enunciados_l>" << endl);
 		return 1;
 	}
 	//folow
 	else if (token->token == RW_FIM) {
-		DEBUG(
-				cout<< "saiu <lista_de_enunciados_l> flow " << tokenRep(token->token) << endl);
 		return -1;
 	} else {
-		DEBUG(cout<< "saiu <lista_de_enunciados_l> epsilon" << endl);
 		return 1;
 	}
 }
@@ -629,12 +634,12 @@ int enunciado() {
 		enunciado();
 		return 1;
 	}
-	//folow
+	//folow  ;   | fim | senao
 	else if (token->token == OP_PONTO_VIRGULA || token->token == RW_FIM
 			|| token->token == RW_SENAO) {
 		return -1;
 	} else {
-		cerr << " condicao de erro faltam em <enunciado> " << endl;
+		cerr << " condicao de erro faltal em <enunciado> " << endl;
 		return -1;
 	}
 }
@@ -652,7 +657,7 @@ int enunciado_l() {
 		chamada_procedimento_l();
 		return 1;
 	}
-//folow
+	//folow
 	else if (token->token == OP_PONTO_VIRGULA || token->token == RW_FIM
 			|| token->token == RW_SENAO) {
 		return -1;
@@ -660,54 +665,24 @@ int enunciado_l() {
 		return 1;
 	}
 }
-/*int variavel() {
- DEBUG(cout<< "<variavel>" << endl);
- //	<variavel> --> id <variavel'>
- if (token->token == ID) {
- casaToken(token, ID);
- variavel_l();
- return 1;
- }
- //folow
- else if (token->token == OP_DOIS_PONTOS) {
- return -1;
- } else {
- return -1;
- }
- }*/
+
 int variavel_l() {
 	DEBUG(cout<< "<variavel'>" << endl);
-//	<variavel'> --> [ <expressao> ] | epsilon
+	//	<variavel'> --> [ <expressao> ] | epsilon
 	if (token->token == OP_ABRE_COLCHETE) {
 		casaToken(token, OP_ABRE_COLCHETE);
 		expressao();
 		casaToken(token, OP_FECHA_COLCHETE);
 		return 1;
 	}
-//folow
-	else if (token->token == OP_DOIS_PONTOS) {
+	//folow
+	else if (token->token == OP_RECEBE) {
 		return -1;
 	} else {
 		return 1;
 	}
 }
-/*int chamada_procedimento() {
- DEBUG(cout<< "<chamada_de_procedimento>" << endl);
- //	<chamada_de_procedimento> --> id <chamada_de_procedimento'>
- if (token->token == ID) {
- casaToken(token, ID);
- chamada_procedimento_l();
- return 1;
- }
- //folow
- else if (token->token == OP_PONTO_VIRGULA || token->token == RW_FIM
- || token->token == RW_SENAO
- || token->token == OP_FECHA_PARENTESES) {
- return -1;
- } else {
- return -1;
- }
- }*/
+
 int chamada_procedimento_l() {
 	DEBUG(cout<< "<chamada_de_procedimento_l>" << endl);
 //  <chamada_de_procedimento'> --> ( <lista_de_expressoes> ) | epsilon
@@ -717,7 +692,7 @@ int chamada_procedimento_l() {
 		casaToken(token, OP_FECHA_PARENTESES);
 		return 1;
 	}
-//folow
+	//folow
 	else if (token->token == OP_PONTO_VIRGULA || token->token == RW_FIM
 			|| token->token == RW_SENAO) {
 		return -1;
