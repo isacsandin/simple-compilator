@@ -16,5 +16,6 @@ hashtab *myhash = NULL;
 FILE *file = NULL;
 node *token = NULL;
 int linha_atual = 1;
+int col_atual = 1;
 
 #endif /* COMPILADOR_HPP_ */
