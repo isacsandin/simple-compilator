@@ -27,7 +27,7 @@ node *put(hashtab *h,const char* key,node* n);
 
 void printhashtable(hashtab *h,FILE *f);
 
-char *tokenRep(int tok);
+const char *tokenRep(int tok);
 
 void cleanup(hashtab *h);
 
