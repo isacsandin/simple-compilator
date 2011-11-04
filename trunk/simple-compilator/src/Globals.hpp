@@ -6,3 +6,5 @@ extern FILE *file;
 extern node *token;
 extern int linha_atual;
 extern int col_atual;
+
+//jjkaakjbkbj

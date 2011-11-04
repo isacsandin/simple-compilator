@@ -108,8 +108,8 @@ void cleanup(hashtab *h){
 	}
 }
 
-char *tokenRep(int token){
-	char *saida;
+const char *tokenRep(int token){
+	const char *saida;
 	switch(token){
 		case 298: saida = "ID"; break;
 		case 299: saida = "NUM"; break;

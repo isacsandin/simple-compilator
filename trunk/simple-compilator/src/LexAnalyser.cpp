@@ -19,7 +19,7 @@ node *getCorrectToken(const char* tok){
 	node *n=NULL;
 
 	struct _aa{
-		char* index;
+		const char* index;
 		int token_type;
 	}reservadas[21]{
 			{"programa",RW_PROGRAMA},
