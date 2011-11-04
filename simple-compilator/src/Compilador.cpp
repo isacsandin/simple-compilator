@@ -29,11 +29,13 @@ int main(int argc,char** argv) {
 
 	DEBUG(cout<< "entrando no programa " << endl);
 
-	file = fopen("teste","r");
+	file = fopen("teste.txt","r");
 	myhash = inithashtab(201);
 
 	getToken();
+	cout << "Iniciando analisador Sintático" << endl;
 	programa();
+	cout << "Finalizando analisador Sintático" << endl;
 
 	return 0;
 }

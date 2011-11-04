@@ -4,7 +4,9 @@ using namespace std;
 
 int get(){
 	int c = getc(file);
-	if(c == '\n') linha_atual++;
+	if(c == '\n'){
+		linha_atual++;
+	}
 	return c;
 }
 

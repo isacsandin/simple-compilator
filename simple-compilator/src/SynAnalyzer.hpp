@@ -5,13 +5,20 @@
 #include <cstdio>
 #include <cstdlib>
 #include <set>
+#include <vector>
 #include "Hash.hpp"
 #include "Utils.hpp"
 #include "LexAnalyzer.hpp"
 #include "Constantes.hpp"
 #include "Globals.hpp"
+#include "FirstFollow.hpp"
 
 int casaToken(node *tok,int tok_type);
+int casaOuSinc(node* tok, int tok_type, int *first);
+void mensagem_erro(set<int> esperados,int encontado);
+int sync(int *syncv);
+int in(int v[]);
+
 int expressao();
 int expressao_simples();
 int expressao_simples_l();
@@ -46,9 +53,6 @@ int variavel();
 int variavel_l();
 int chamada_procedimento();
 int chamada_procedimento_l();
-
-void mensagem_erro(set<int> esperados,int encontado);
-int sync(set<int> syncset);
 
 
 #endif /* SYNANALYZER_HPP_ */

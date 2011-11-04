@@ -45,7 +45,9 @@
 #define OP_PONTO_VIRGULA 339
 #define OP_VIRGULA 340
 #define OP_PONTO 341
-#define DEBUG_SET 1
+#define FINAL_V  9999
+//defines ninjas
+#define DEBUG_SET 0
 #define DEBUG(x) if(DEBUG_SET) x
 
 #endif /* CONSTANTES_HPP_ */

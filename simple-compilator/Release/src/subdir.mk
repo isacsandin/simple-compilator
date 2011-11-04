@@ -5,18 +5,21 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
 ../src/Compilador.cpp \
+../src/FirstFollow.cpp \
 ../src/Hash.cpp \
 ../src/LexAnalyser.cpp \
 ../src/SynAnalyzer.cpp 
 
 OBJS += \
 ./src/Compilador.o \
+./src/FirstFollow.o \
 ./src/Hash.o \
 ./src/LexAnalyser.o \
 ./src/SynAnalyzer.o 
 
 CPP_DEPS += \
 ./src/Compilador.d \
+./src/FirstFollow.d \
 ./src/Hash.d \
 ./src/LexAnalyser.d \
 ./src/SynAnalyzer.d 
