@@ -5,6 +5,7 @@ using namespace Utils;
 
 int main(int argc,char** argv) {
 
+
 	/*int opt;
 	char *input = NULL;
 	while ((opt = getopt (argc, argv, "f:")) != -1) {
