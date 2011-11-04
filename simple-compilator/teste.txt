@@ -4,7 +4,7 @@ programa exemplo;
 declare x, y: numerico;
 
 {funcoes}
-funcao funcEx (a , b : numerico): numerico;
+funcao funcEx ( , b : numerico): numerico;
 inicio
 se b=0 entao funcEx := a
 senao funEx := b

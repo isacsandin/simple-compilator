@@ -6,7 +6,7 @@ int casaToken(node* tok, int tok_type) {
 		getToken();
 		return 1;
 	} else {
-		cerr << "linha " << linha_atual<< ":" << col_atual << " : Esperado " << tokenRep(tok_type)
+		cerr << "linha " << linha_atual << ": Esperado " << tokenRep(tok_type)
 				<< " mas o encontrado foi " << tok->value << endl;
 		return -1;
 	}
@@ -18,7 +18,7 @@ int casaOuSinc(node* tok, int tok_type, int first[]) {
 		getToken();
 		return 1;
 	} else {
-		cerr << "linha " << linha_atual<< ":" << col_atual << " : Esperado " << tokenRep(tok_type)
+		cerr << "linha " << linha_atual<< " : Esperado " << tokenRep(tok_type)
 				<< " mas o encontrado foi " << tok->value << endl;
 		sync(first);
 		return -1;
