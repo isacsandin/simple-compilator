@@ -7,7 +7,6 @@
 #include <set>
 #include <vector>
 #include "Hash.hpp"
-#include "Utils.hpp"
 #include "LexAnalyzer.hpp"
 #include "Constantes.hpp"
 #include "Globals.hpp"
