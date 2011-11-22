@@ -21,32 +21,12 @@ node *getCorrectToken(const char* tok){
 	struct _aa{
 		const char* index;
 		int token_type;
-	}reservadas[21]{
-			{"programa",RW_PROGRAMA},
-			{"declare",RW_DECLARE},
-			{"fim_declare",RW_FIM_DECLARE},
-			{"arranjo",RW_ARRANJO},
-			{"de",RW_DE},
-			{"numerico",RW_NUMERICO},
-			{"booleano",RW_BOOLEANO},
-			{"verdadeiro",RW_VERDADEIRO},
-			{"falso",RW_FALSO},
-			{"procedimento",RW_PROCEDIMENTO},
-			{"funcao",RW_FUNCAO},
-			{"se",RW_SE},
-			{"entao",RW_ENTAO},
-			{"senao",RW_SENAO},
-			{"enquanto",RW_ENQUANTO},
-			{"faca",RW_FACA},
-			{"retorne",RW_RETORNE},
-			{"e",RW_E},
-			{"ou",RW_OU},
-			{"inicio",RW_INICIO},
-			{"fim",RW_FIM},
-
+	}reservadas[2]{
+			{"int",RW_INT},
+			{"float",RW_FLOAT},
 		};
 
-	for(int i=0;i<21;i++){
+	for(int i=0;i<2;i++){
 		if(!strcmp(reservadas[i].index,tok)){
 			n = alocaNode();
 			n->token = reservadas[i].token_type;
@@ -67,7 +47,7 @@ void getToken(){
 	stringstream tmp;
 	int state = 0;
 	node* n = NULL;
-
+	bool is_int = true;
 	while(true){
 		switch (state) {
 		case 0:
@@ -87,31 +67,11 @@ void getToken(){
 				state = 8;
 				break;
 			case '/':
-				state = 1;
-				break;
-			case '<':
-				state = 2;
-				break;
-			case '>':
-				state = 3;
-				break;
-			case '=':
-				n = alocaNode(OP_IGUAL,"=",0,NULL);
+				n = alocaNode(OP_DIVIDIDO,"/",0,NULL);
 				state = 8;
 				break;
 			case ':':
 				state = 4;
-				break;
-			case '[':
-				n = alocaNode(OP_ABRE_COLCHETE,"[",0,NULL);
-				state = 8;
-				break;
-			case ']':
-				n = alocaNode(OP_FECHA_COLCHETE,"]",0,NULL);
-				state = 8;
-				break;
-			case '{': //comentario
-				state = 5;
 				break;
 			case '(':
 				n = alocaNode(OP_ABRE_PARENTESES,"(",0,NULL);
@@ -129,14 +89,10 @@ void getToken(){
 				n = alocaNode(OP_VIRGULA,",",0,NULL);
 				state = 8;
 				break;
-			case '.':
-				n = alocaNode(OP_PONTO,".",0,NULL);
-				state = 8;
-				break;
 		default:
 			if (isdigit(tok)){
 				if(tok == '0'){
-					n = alocaNode(NUM,"0",0,NULL);
+					n = alocaNode(NUM_INT,"0",0,NULL);
 					state = 8;
 					break;
 				}
@@ -161,53 +117,6 @@ void getToken(){
 			}
 		}
 		break;
-		case 1: //comentario uma linha
-			tok = get();
-			switch (tok) {
-			case '/':
-				tok = get();
-				while(tok != '\n') tok = get();
-				state = 0;
-				break;
-			default:
-				unget(tok);
-				n = alocaNode(OP_DIVIDIDO,"/",0,NULL);
-				state = 8;
-				break;
-			}
-			break;
-		case 2:
-			tok = get();
-			switch (tok) {
-			case '=':
-				n = alocaNode(OP_MENOR_IGUAL,"<=",0,NULL);
-				state = 8;
-				break;
-			case '>':
-				n = alocaNode(OP_DIFERENTE,"<>",0,NULL);
-				state = 8;
-				break;
-			default:
-				unget(tok);
-				n = alocaNode(OP_MENOR,"<",0,NULL);
-				state = 8;
-				break;
-			}
-			break;
-		case 3:
-			tok = get();
-			switch (tok) {
-			case '=':
-				n = alocaNode(OP_MAIOR_IGUAL,">=",0,NULL);
-				state = 8;
-				break;
-			default:
-				unget(tok);
-				n = alocaNode(OP_MAIOR,">",0,NULL);
-				state = 8;
-				break;
-			}
-			break;
 		case 4:
 			tok = get();
 			switch (tok) {
@@ -222,12 +131,8 @@ void getToken(){
 				break;
 			}
 			break;
-		case 5://comentario multiplas linhas
-			tok = get();
-			while (tok != '}' && !feof(file)) tok = get();
-			state = 0;
-			break;
 		case 6: //numeros
+			is_int = true;
 			tmp.clear();
 			tmp << tok;
 			tok = get();
@@ -235,8 +140,20 @@ void getToken(){
 				tmp << tok;
 				tok = get();
 			}
+			if (tok == '.'){
+				is_int = false;
+				tmp << tok;
+				tok = get();
+				while (isdigit(tok)){
+					tmp << tok;
+					tok = get();
+				}
+			}
 			unget(tok);
-			n = alocaNode(NUM,tmp.str().c_str(),atoi(tmp.str().c_str()),NULL);
+			if(is_int)
+				n = alocaNode(NUM_INT,tmp.str().c_str(),atoi(tmp.str().c_str()),NULL);
+			else
+				n = alocaNode(NUM_FLOAT,tmp.str().c_str(),atof(tmp.str().c_str()),NULL);
 			state = 8;
 			break;
 		case 7: //id

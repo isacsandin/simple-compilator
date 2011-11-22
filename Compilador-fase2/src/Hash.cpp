@@ -106,29 +106,11 @@ void cleanup(hashtab *h){
 const char *tokenRep(int token){
 	const char *saida;
 	switch(token){
-		case 298: saida = "ID"; break;
-		case 299: saida = "NUM"; break;
-		case 300: saida = "RW_PROGRAMA"; break;
-		case 301: saida = "RW_DECLARE"; break;
-		case 302: saida = "RW_FIM_DECLARE"; break;
-		case 303: saida = "RW_ARRANJO"; break;
-		case 304: saida = "RW_DE"; break;
-		case 305: saida = "RW_NUMERICO"; break;
-		case 306: saida = "RW_BOOLEANO"; break;
-		case 307: saida = "RW_VERDADEIRO"; break;
-		case 308: saida = "RW_FALSO"; break;
-		case 309: saida = "RW_PROCEDIMENTO"; break;
-		case 310: saida = "RW_FUNCAO"; break;
-		case 311: saida = "RW_SE"; break;
-		case 312: saida = "RW_ENTAO"; break;
-		case 313: saida = "RW_SENAO"; break;
-		case 314: saida = "RW_ENQUANTO"; break;
-		case 315: saida = "RW_FACA"; break;
-		case 316: saida = "RW_RETORNE"; break;
-		case 317: saida = "RW_E"; break;
-		case 318: saida = "RW_OU"; break;
-		case 319: saida = "RW_INICIO"; break;
-		case 320: saida = "RW_FIM"; break;
+		case 297: saida = "ID"; break;
+		case 298: saida = "NUM_INT"; break;
+		case 299: saida = "NUM_FLOAT"; break;
+		case 300: saida = "RW_INT"; break;
+		case 301: saida = "RW_FLOAT"; break;
 		case 321: saida = "OP_MAIS"; break;
 		case 322: saida = "OP_MENOS"; break;
 		case 323: saida = "OP_VEZES"; break;
