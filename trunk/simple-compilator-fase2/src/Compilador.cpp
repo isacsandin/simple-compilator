@@ -46,14 +46,7 @@ int main(int argc,char** argv) {
 	myhash = inithashtab(201);
 
 	getToken();
-	while(token->token != EOF){
-		cout << tokenRep(token->token) << endl;
-		getToken();
-	}
-
-
-	//getToken();
-	//programa();
+	programa();
 
 	return EXIT_SUCCESS;
 }

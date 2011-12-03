@@ -6,10 +6,9 @@
 #include <cstdlib>
 #include "Hash.hpp"
 #include "LexAnalyzer.hpp"
-//#include "SynAnalyzer.hpp"
+#include "SynAnalyzer.hpp"
 #include "Constantes.hpp"
 #include "Globals.hpp"
-//#include "SynAnalyzer.hpp"
 
 hashtab *myhash = NULL;
 FILE *file = NULL;
