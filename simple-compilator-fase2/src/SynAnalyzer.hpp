@@ -15,23 +15,23 @@
 int casaToken(node *tok,int tok_type);
 int casaOuSinc(node* tok, int tok_type, int *first);
 void mensagem_erro(set<int> esperados,int encontado);
-int sync(int *syncv);
-int in(int v[]);
+void sync(int *syncv);
+bool in(int v[]);
 
-int programa();
+node* programa();
 int var_decls();
 int var_decls_l();
-int var_decl();
-int tipo_exp();
+node* var_decl();
+node* tipo_exp();
 int decls();
 int decls_l();
 int decl();
-int exp();
-int exp_l();
-int termo();
-int termo_l();
-int fator();
-int numero();
+node* exp();
+node* exp_l(node*);
+node* termo();
+node* termo_l(node*);
+node* fator();
+node* numero();
 
 
 #endif /* SYNANALYZER_HPP_ */

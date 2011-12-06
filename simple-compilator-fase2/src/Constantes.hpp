@@ -1,6 +1,9 @@
 #ifndef CONSTANTES_HPP_
 #define CONSTANTES_HPP_
 
+#define TYPE_NONE 294
+#define TYPE_INT 295
+#define TYPE_FLOAT 296
 #define ID 297
 #define NUM_INT 298
 #define NUM_FLOAT 299

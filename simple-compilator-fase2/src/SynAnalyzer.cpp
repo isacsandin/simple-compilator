@@ -2,30 +2,30 @@
 
 int casaToken(node* tok, int tok_type) {
 	if (tok->token == tok_type) {
-		DEBUG(cout<< "reconheceu  " << token->value << endl);
+		DEBUG(cout<< "reconheceu  " << token->value_str << endl);
 		getToken();
 		return 1;
 	} else {
 		cerr << "Linha " << linha_atual << ": Esperado " << tokenRep(tok_type)
-				<< " mas o encontrado foi " << tok->value << endl;
+				<< " mas o encontrado foi " << tok->value_str << endl;
 		return -1;
 	}
 }
 
 int casaOuSinc(node* tok, int tok_type, int first[]) {
 	if (tok->token == tok_type) {
-		DEBUG(cout<< "reconheceu  " << token->value << endl);
+		DEBUG(cout<< "reconheceu  " << token->value_str << endl);
 		getToken();
 		return 1;
 	} else {
 		cerr << "Linha " << linha_atual<< " : Esperado " << tokenRep(tok_type)
-				<< " mas o encontrado foi " << tok->value << endl;
+				<< " mas o encontrado foi " << tok->value_str << endl;
 		sync(first);
 		return 1;
 	}
 }
 
-int sync(int *syncv) {
+void sync(int *syncv) {
 
 	DEBUG(cout << "Sincronizando " << endl;)
 
@@ -37,10 +37,10 @@ int sync(int *syncv) {
 	else
 		DEBUG(cout << "next token " << tokenRep(token->token) << endl;)
 		cin.get();
-		return 1;
+		return;
 }
 
-int in(int *v){
+bool in(int *v){
 
 	int *p = v;
 
@@ -63,23 +63,29 @@ void mensagem_erro(int *esperados, int encontado) {
 	cerr << ",mas o encontrado foi " << tokenRep(encontado) << endl;
 }
 
+template<typename T>
+const char *toStr(T source){
+	stringstream ss; ss << source;
+	return ss.str().c_str();
+}
 
-int programa() {
+node* programa() {
 	DEBUG(cout<< "<programa>" << endl);
 	//<programa> -> <var-decls> , <decls> , <exp> ,
+	node *n=NULL;
 	if (in(first_programa)) {
 		var_decls();
 		casaToken(token, OP_VIRGULA);
 		decls();
 		casaToken(token, OP_VIRGULA);
-		exp();
+		n = exp();
 		casaToken(token, OP_VIRGULA);
-		return 1;
+		return n;
 	} else {
 		DEBUG(cout<< "sinc <programa>" << endl);
 		mensagem_erro(first_programa,token->token);
 		sync(follow_programa);
-		return 1;
+		return NULL;
 	}
 }
 
@@ -114,39 +120,48 @@ int var_decls_l() {
 	}
 }
 
-int var_decl() {
+node* var_decl() {
 	DEBUG(cout<< "entrou <var_decl>" << endl);
 	//<var-decl> -> <tipo-exp> : id
+	node* n = NULL;
 	if (in(first_var_decl)) {
-		tipo_exp();
+		n = tipo_exp();
 		casaToken(token,OP_DOIS_PONTOS);
+		if(search(myhash,token->token,token->value_str)){
+			cerr <<  "linha "<< linha_atual<<": variável " << token->value_str << " já declarada anteriormente!" << endl;
+			exit(EXIT_FAILURE);
+		}
+		n = put(myhash,token->value_str,token);
 		casaToken(token,ID);
 		DEBUG(cout<< "saiu <var_decl>" << endl);
-		return 1;
+		return n;
 	} else {
 		DEBUG(cout<< "sinc <var_decl>" << endl);
 		mensagem_erro(first_var_decl,token->token);
 		sync(follow_var_decl);
-		return 1;
+		return NULL;
 	}
 }
 
-int tipo_exp() {
+node* tipo_exp() {
 	DEBUG(cout<< "entrou <tipo_exp>" << endl);
 	//<tipo-exp> -> int | float
+	node* n = NULL;
 	if (token->token == RW_INT) {
+		n = token;
 		casaToken(token,RW_INT);
 		DEBUG(cout<< "saiu <tipo_exp>" << endl);
-		return 1;
+		return n;
 	}else if (token->token == RW_FLOAT) {
+		n = token;
 		casaToken(token,RW_FLOAT);
 		DEBUG(cout<< "saiu <tipo_exp>" << endl);
-		return 1;
+		return n;
 	} else {
 		DEBUG(cout<< "sinc <tipo_exp>" << endl);
 		mensagem_erro(first_tipo_exp,token->token);
 		sync(follow_tipo_exp);
-		return 1;
+		return n;
 	}
 }
 
@@ -183,10 +198,26 @@ int decls_l() {
 int decl() {
 	DEBUG(cout<< "entrou <decl>" << endl);
 	//<decl> -> id := <exp>
+	node* n1 = NULL;
+	node* n2 = NULL;
 	if (token->token == ID) {
+		n1 = search(myhash,token->token,token->value_str);
+		if (!n1){
+			cerr << "linha "<< linha_atual<<": Erro variável "<< token->value_str <<" não declarada!" << endl;
+			exit(EXIT_FAILURE);
+		}
 		casaToken(token,ID);
 		casaToken(token,OP_RECEBE);
-		exp();
+		n2 = exp();
+		if (n1->type == TYPE_INT && n2->type == TYPE_FLOAT){
+			cerr << "linha:"<< linha_atual<<": Warning perda de precisão na atribuição! "<< endl;
+			n1->value = (int)n2->value;
+			n1->value_str = strdup(toStr((int)n2->value));
+		}
+		else{
+			n1->value = n2->value;
+			n1->value_str = strdup(toStr(n2->value));
+		}
 		DEBUG(cout<< "saiu <decl>" << endl);
 		return 1;
 	} else {
@@ -197,118 +228,137 @@ int decl() {
 	}
 }
 
-int exp() {
+node* exp() {
 	DEBUG(cout<< "entrou <exp>" << endl);
 	//<exp> -> <termo> <exp-l>
+	node *n=NULL;
 	if (in(first_exp)) {
-		termo();
-		exp_l();
+		n = termo();
+		n = exp_l(n);
 		DEBUG(cout<< "saiu <exp>" << endl);
-		return 1;
+		return n;
 	} else {
 		DEBUG(cout<< "sinc <exp>" << endl);
 		mensagem_erro(first_exp,token->token);
 		sync(follow_exp);
-		return 1;
+		return NULL;
 	}
 }
 
-int exp_l() {
+node* exp_l(node *n) {
 	DEBUG(cout<< "entrou <exp>" << endl);
-	//<exp> -> <termo> <exp-l>
+	//<exp-l> -> + <termo> <exp-l> | - <termo> <exp-l> | epsilon
+	node *n2 = NULL;
+	node n3;
 	if (token->token == OP_MAIS) {
 		casaToken(token,OP_MAIS);
-		termo();
-		exp_l();
+		n2 = termo();
+		n3.value = n->value + n2->value;
+		n3.value_str = strdup(toStr(n3.value));
+		n2 = exp_l(&n3);
 		DEBUG(cout<< "saiu <exp>" << endl);
-		return 1;
+		return n2;
 	}else if (token->token == OP_MENOS) {
 		casaToken(token,OP_MENOS);
-		termo();
-		exp_l();
+		n2 = termo();
+		n3.value = n->value - n2->value;
+		n3.value_str = strdup(toStr(n3.value));
+		n2 = exp_l(&n3);
 		DEBUG(cout<< "saiu <exp>" << endl);
-		return 1;
+		return n2;
 	}else {
-		return 1;
+		return n;
 	}
 }
 
-int termo() {
+node* termo() {
 	DEBUG(cout<< "entrou <termo>" << endl);
 	//<termo> -> <fator> <termo-l>
+	node *n = NULL;
 	if (in(first_termo)) {
-		fator();
-		termo_l();
+		n = fator();
+		n = termo_l(n);
 		DEBUG(cout<< "saiu <termo>" << endl);
-		return 1;
+		return n;
 	} else {
 		DEBUG(cout<< "sinc <termo>" << endl);
 		mensagem_erro(first_termo,token->token);
 		sync(follow_termo);
-		return 1;
+		return n;
 	}
 }
 
-int termo_l() {
+node* termo_l(node *n) {
 	DEBUG(cout<< "entrou <exp_l>" << endl);
-	//<termo-l> -> *<fator> <termo-l> | / <fator> <termo-l> | epsilon
+	//<termo-l> -> * <fator> <termo-l> | / <fator> <termo-l> | epsilon
+	node *n2 = NULL;
+	node n3;
 	if (token->token == OP_VEZES) {
 		casaToken(token,OP_VEZES);
-		fator();
-		termo_l();
+		n2 = fator();
+		n3.value = n->value * n2->value;
+		n3.value_str = strdup(toStr(n3.value));
+		n2 = termo_l(&n3);
 		DEBUG(cout<< "saiu <exp_l>" << endl);
-		return 1;
+		return n2;
 	}else if (token->token == OP_DIVIDIDO) {
 		casaToken(token,OP_DIVIDIDO);
-		fator();
-		termo_l();
+		n2 = fator();
+		n3.value = n->value / n2->value;
+		n3.value_str = strdup(toStr(n3.value));
+		n2 = termo_l(&n3);
 		DEBUG(cout<< "saiu <exp_l>" << endl);
-		return 1;
+		return n2;
 	}else {
-		return 1;
+		return n;
 	}
 }
 
-int fator() {
+node* fator() {
 	DEBUG(cout<< "entrou <fator>" << endl);
 	//<fator> -> (<exp>) | <numero> | id
+	node *n = NULL;
 	if (token->token == OP_ABRE_PARENTESES) {
 		casaToken(token,OP_ABRE_PARENTESES);
-		exp();
+		n = exp();
 		casaToken(token,OP_FECHA_PARENTESES);
 		DEBUG(cout<< "saiu <fator>" << endl);
-		return 1;
+		return n;
 	}else if (token->token == NUM_INT || token->token == NUM_FLOAT) {
-		numero();
+		n = numero();
 		DEBUG(cout<< "saiu <fator>" << endl);
-		return 1;
+		return n;
 	}else if (token->token == ID) {
+		n = token;
 		casaToken(token,ID);
 		DEBUG(cout<< "saiu <fator>" << endl);
-		return 1;
+		return n;
 	} else {
 		DEBUG(cout<< "sinc <fator>" << endl);
 		mensagem_erro(first_fator,token->token);
 		sync(follow_fator);
-		return 1;
+		return NULL;
 	}
 }
 
-int numero() {
+node* numero() {
 	DEBUG(cout<< "entrou <numero>" << endl);
 	//<numero> -> numInt | numFloat
+	node* n = NULL;
 	if (token->token == NUM_INT) {
+		n = token;
 		casaToken(token,NUM_INT);
 		DEBUG(cout<< "saiu <numero>" << endl);
-		return 1;
+		return n;
 	}else if (token->token == NUM_FLOAT) {
+		n = token;
 		casaToken(token,NUM_FLOAT);
 		DEBUG(cout<< "saiu <numero>" << endl);
-		return 1;
+		return n;
 	}else {
 		DEBUG(cout<< "sinc <numero>" << endl);
 		mensagem_erro(first_numero,token->token);
 		sync(follow_numero);
-		return 1;
+		return NULL;
 	}
 }
