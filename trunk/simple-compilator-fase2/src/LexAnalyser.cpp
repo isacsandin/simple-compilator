@@ -30,15 +30,15 @@ node *getCorrectToken(const char* tok){
 		if(!strcmp(reservadas[i].index,tok)){
 			n = alocaNode();
 			n->token = reservadas[i].token_type;
-			n->value = strdup(tokenRep(reservadas[i].token_type));
-			n->value_int = 0;
+			n->value_str = strdup(tokenRep(reservadas[i].token_type));
+			n->value = 0;
 			return n;
 		}
 	}
 	n = alocaNode();
 	n->token = ID;
-	n->value = strdup(tok);
-	n->value_int = 0;
+	n->value_str = strdup(tok);
+	n->value = 0;
 	return n;
 }
 
@@ -173,7 +173,7 @@ void getToken(){
 				token = n;
 				return;
 			}
-			token = put(myhash,n->value,n);
+			token = n;
 			return;
 
 		default:

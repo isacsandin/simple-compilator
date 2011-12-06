@@ -15,12 +15,14 @@ node *alocaNode(){
 	return (node*)malloc(sizeof(node));
 }
 
-node *alocaNode(int tok,const char* value,int value_int,node* next){
+node *alocaNode(int tok,const char* value_str,float value,node* next){
 	node *n = alocaNode();
 	if(n){
 	n->token = tok;
-	n->value = strdup(value);
-	n->value_int = value_int;
+	n->value_str = strdup(value_str);
+	n->value = value;
+	n->initialized = false;
+	n->type = TYPE_NONE;
 	n->next = next;
 	}
 	return n;
@@ -46,7 +48,7 @@ node* search(hashtab *h,int tok,const char *key){
 	node* np=h->tab[hi];
 
 	for(;np!=NULL;np=np->next){
-			if(np->token == tok && !strcmp(np->value,key))
+			if(np->token == tok && !strcmp(np->value_str,key))
 				return np;
 		}
 
@@ -79,7 +81,10 @@ void printhashtable(hashtab *h,FILE *f){
 			np=h->tab[i];
 			fprintf(f,"%d:",i);
 			while(np!=NULL){
-				fprintf(f,"(%s %s %d)",tokenRep(np->token),np->value,np->value_int);
+				if(np->type == TYPE_INT)
+					fprintf(f,"(%s %s %d)",tokenRep(np->token),np->value_str,(int)np->value);
+				else
+					fprintf(f,"(%s %s %f)",tokenRep(np->token),np->value_str,np->value);
 				np=np->next;
 			}
 			fprintf(f,"\n");
@@ -95,7 +100,7 @@ void cleanup(hashtab *h){
 			np=h->tab[i];
 			while(np!=NULL){
 				t=np->next;
-				free(np->value);
+				free(np->value_str);
 				free(np);
 				np=t;
 			}
@@ -106,6 +111,9 @@ void cleanup(hashtab *h){
 const char *tokenRep(int token){
 	const char *saida;
 	switch(token){
+		case 294: saida = "TYPE_NONE";break;
+		case 295: saida = "TYPE_INT";break;
+		case 296: saida = "TYPE_FLOAT";break;
 		case 297: saida = "ID"; break;
 		case 298: saida = "NUM_INT"; break;
 		case 299: saida = "NUM_FLOAT"; break;

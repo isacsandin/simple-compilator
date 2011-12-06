@@ -5,11 +5,12 @@
 #include <cstring>
 #include "Constantes.hpp"
 
-
 typedef struct _node{
 	int token;
-	char* value;
-	int value_int;
+	char* value_str;
+	float value;
+	bool initialized;
+	int type;
 	struct _node *next;
 }node;
 
@@ -22,7 +23,7 @@ hashtab *inithashtab(int tamanho);
 
 node *alocaNode();
 
-node *alocaNode(int tok,const char* value,int value_int,node* next);
+node *alocaNode(int tok,const char* value_str,float value,node* next);
 
 unsigned int hash(const char* str,int tamanho);
 
