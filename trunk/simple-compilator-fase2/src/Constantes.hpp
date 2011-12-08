@@ -22,7 +22,7 @@
 #define OP_PONTO 341
 #define FINAL_V  9999
 //defines ninjas
-#define DEBUG_SET 1
+#define DEBUG_SET 0
 #define DEBUG(x) if(DEBUG_SET) x
 
 #endif /* CONSTANTES_HPP_ */
