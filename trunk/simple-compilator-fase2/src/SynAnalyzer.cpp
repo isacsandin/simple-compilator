@@ -83,8 +83,6 @@ node* programa() {
 		cout << "tabela símbolos intermediaria "<< endl;
 		printhashtable(myhash,stdout);
 		n = exp();
-		cout << "tabela símbolos final "<< endl;
-		printhashtable(myhash,stdout);
 		n->token = ID;
 		n->value_str = strdup("<exp>");
 		n->initialized = true;
@@ -247,10 +245,10 @@ node* exp() {
 	node *n=NULL;
 	if (in(first_exp)) {
 		n = termo();
-		printNode(stdout,n);
+		//printNode(stdout,n);
 		cout << endl;
 		n = exp_l(n);
-		printNode(stdout,n);
+		//printNode(stdout,n);
 		DEBUG(cout<< "saiu <exp>" << endl);
 		return n;
 	} else {
@@ -265,7 +263,9 @@ node* exp_l(node *n) {
 	DEBUG(cout<< "entrou <exp>" << endl);
 	//<exp-l> -> + <termo> <exp-l> | - <termo> <exp-l> | epsilon
 	node *n2 = NULL;
-	node n3;
+	node *n3 = alocaNode();
+	n3->value_str = strdup("<expl>");
+	n3->token = ID;
 	if (token->token == OP_MAIS) {
 		casaToken(token,OP_MAIS);
 		n2 = termo();
@@ -275,11 +275,11 @@ node* exp_l(node *n) {
 		if (!n2->initialized){
 			cerr << "linha:"<< linha_atual<<": Warning 2 variável "<< n2->value_str <<"  não inicializada, assumindo valor 0! "<< endl;
 		}
-		n3.value = n->value + n2->value;
-		if(n->type == TYPE_FLOAT || n2->type == TYPE_FLOAT) n3.type = TYPE_FLOAT;
-		else n3.type = TYPE_INT;
-		n3.initialized = true;
-		n2 = exp_l(&n3);
+		n3->value = n->value + n2->value;
+		if(n->type == TYPE_FLOAT || n2->type == TYPE_FLOAT) n3->type = TYPE_FLOAT;
+		else n3->type = TYPE_INT;
+		n3->initialized = true;
+		n2 = exp_l(n3);
 		DEBUG(cout<< "saiu <exp>" << endl);
 		return n2;
 	}else if (token->token == OP_MENOS) {
@@ -291,16 +291,16 @@ node* exp_l(node *n) {
 		if (!n2->initialized){
 			cerr << "linha:"<< linha_atual<<": Warning 4 variável "<< n2->value_str <<"  não inicializada, assumindo valor 0! "<< endl;
 		}
-		n3.value = n->value - n2->value;
-		if(n->type == TYPE_FLOAT || n2->type == TYPE_FLOAT) n3.type = TYPE_FLOAT;
-		else n3.type = TYPE_INT;
-		n3.initialized = true;
-		n2 = exp_l(&n3);
+		n3->value = n->value - n2->value;
+		if(n->type == TYPE_FLOAT || n2->type == TYPE_FLOAT) n3->type = TYPE_FLOAT;
+		else n3->type = TYPE_INT;
+		n3->initialized = true;
+		n2 = exp_l(n3);
 		DEBUG(cout<< "saiu <exp>" << endl);
 		return n2;
 	}else {
-		cout << "imprimindo epslon expl"<< endl;
-		printNode(stdout,n);
+		//cout << "imprimindo epslon expl"<< endl;
+		//printNode(stdout,n);
 		return n;
 	}
 }

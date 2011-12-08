@@ -31,6 +31,7 @@ node *alocaNode(int tok,const char* value_str,float value,node* next){
 void printNode(FILE *f,node* np){
 	fprintf(f,"imprimindo nodo");
 	fprintf(f,"(%s %s %f init:%d)",tokenRep(np->token),np->value_str,np->value,(bool)np->initialized);
+	fprintf(f,"\n");
 	}
 
 
