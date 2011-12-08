@@ -18,7 +18,7 @@ void mensagem_erro(set<int> esperados,int encontado);
 void sync(int *syncv);
 bool in(int v[]);
 
-node* programa();
+int programa();
 int var_decls();
 int var_decls_l();
 node* var_decl();

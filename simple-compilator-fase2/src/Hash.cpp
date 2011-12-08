@@ -29,9 +29,7 @@ node *alocaNode(int tok,const char* value_str,float value,node* next){
 }
 
 void printNode(FILE *f,node* np){
-	fprintf(f,"imprimindo nodo");
-	fprintf(f,"(%s %s %f init:%d)",tokenRep(np->token),np->value_str,np->value,(bool)np->initialized);
-	fprintf(f,"\n");
+	fprintf(f,"(%s %s %f type:%s init:%d)",tokenRep(np->token),np->value_str,np->value,tokenRep(np->type),(bool)np->initialized);
 	}
 
 
@@ -88,10 +86,7 @@ void printhashtable(hashtab *h,FILE *f){
 			np=h->tab[i];
 			fprintf(f,"%d:",i);
 			while(np!=NULL){
-				if(np->type == TYPE_INT)
-					fprintf(f,"(%s %s %d init:%d)",tokenRep(np->token),np->value_str,(int)np->value,np->initialized);
-				else
-					fprintf(f,"(%s %s %f init:%d)",tokenRep(np->token),np->value_str,np->value,np->initialized);
+				printNode(f,np);
 				np=np->next;
 			}
 			fprintf(f,"\n");
