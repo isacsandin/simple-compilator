@@ -28,6 +28,12 @@ node *alocaNode(int tok,const char* value_str,float value,node* next){
 	return n;
 }
 
+void printNode(FILE *f,node* np){
+	fprintf(f,"imprimindo nodo");
+	fprintf(f,"(%s %s %f init:%d)",tokenRep(np->token),np->value_str,np->value,(bool)np->initialized);
+	}
+
+
 unsigned int hash(const char* str,int tamanho){
 	unsigned int hash = 0;
 	unsigned int x    = 0;
@@ -82,9 +88,9 @@ void printhashtable(hashtab *h,FILE *f){
 			fprintf(f,"%d:",i);
 			while(np!=NULL){
 				if(np->type == TYPE_INT)
-					fprintf(f,"(%s %s %d)",tokenRep(np->token),np->value_str,(int)np->value);
+					fprintf(f,"(%s %s %d init:%d)",tokenRep(np->token),np->value_str,(int)np->value,np->initialized);
 				else
-					fprintf(f,"(%s %s %f)",tokenRep(np->token),np->value_str,np->value);
+					fprintf(f,"(%s %s %f init:%d)",tokenRep(np->token),np->value_str,np->value,np->initialized);
 				np=np->next;
 			}
 			fprintf(f,"\n");

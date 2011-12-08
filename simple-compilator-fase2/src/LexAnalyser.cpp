@@ -21,9 +21,10 @@ node *getCorrectToken(const char* tok){
 	struct _aa{
 		const char* index;
 		int token_type;
+		int type;
 	}reservadas[2]{
-			{"int",RW_INT},
-			{"float",RW_FLOAT},
+			{"int",RW_INT,TYPE_INT},
+			{"float",RW_FLOAT,TYPE_FLOAT},
 		};
 
 	for(int i=0;i<2;i++){
@@ -32,13 +33,16 @@ node *getCorrectToken(const char* tok){
 			n->token = reservadas[i].token_type;
 			n->value_str = strdup(tokenRep(reservadas[i].token_type));
 			n->value = 0;
+			n->type = reservadas[i].type;
 			return n;
 		}
 	}
 	n = alocaNode();
 	n->token = ID;
 	n->value_str = strdup(tok);
-	n->value = 0;
+	n->value = 0.0;
+	n->initialized = false;
+	n->type = TYPE_NONE;
 	return n;
 }
 
@@ -150,10 +154,16 @@ void getToken(){
 				}
 			}
 			unget(tok);
-			if(is_int)
+			if(is_int){
 				n = alocaNode(NUM_INT,tmp.str().c_str(),atoi(tmp.str().c_str()),NULL);
-			else
+				n->type = TYPE_INT;
+				n->initialized = true;
+			}
+			else{
 				n = alocaNode(NUM_FLOAT,tmp.str().c_str(),atof(tmp.str().c_str()),NULL);
+				n->type = TYPE_FLOAT;
+				n->initialized = true;
+			}
 			state = 8;
 			break;
 		case 7: //id

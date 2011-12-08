@@ -23,6 +23,8 @@ hashtab *inithashtab(int tamanho);
 
 node *alocaNode();
 
+void printNode(FILE *f,node* np);
+
 node *alocaNode(int tok,const char* value_str,float value,node* next);
 
 unsigned int hash(const char* str,int tamanho);
