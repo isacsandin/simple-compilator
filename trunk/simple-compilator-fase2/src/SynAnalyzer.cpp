@@ -32,8 +32,10 @@ void sync(int *syncv) {
 	while (!in(syncv) && token->token != EOF) {
 		getToken();
 	}
-	if (token->token == EOF)
+	if (token->token == EOF){
+		cerr << "erro catastrófico!" << endl;
 		exit(1);
+	}
 	else
 		DEBUG(cout << "next token " << tokenRep(token->token) << endl;)
 		cin.get();
@@ -69,31 +71,32 @@ const char *toStr(T source){
 	return ss.str().c_str();
 }
 
-node* programa() {
+int programa() {
 	DEBUG(cout<< "<programa>" << endl);
 	//<programa> -> <var-decls> , <decls> , <exp> ,
 	node *n=NULL;
 	if (in(first_programa)) {
 		var_decls();
 		casaToken(token, OP_VIRGULA);
-		cout << "tabela símbolos inicial "<< endl;
+		cout << "\ntabela símbolos inicial "<< endl;
 		printhashtable(myhash,stdout);
 		decls();
 		casaToken(token, OP_VIRGULA);
-		cout << "tabela símbolos intermediaria "<< endl;
+		cout << "\ntabela símbolos intermediaria "<< endl;
 		printhashtable(myhash,stdout);
 		n = exp();
 		n->token = ID;
 		n->value_str = strdup("<exp>");
 		n->initialized = true;
+		cout << endl;
 		printNode(stdout,n);
 		casaToken(token, OP_VIRGULA);
-		return n;
+		return 1;
 	} else {
 		DEBUG(cout<< "sinc <programa>" << endl);
 		mensagem_erro(first_programa,token->token);
 		sync(follow_programa);
-		return NULL;
+		return 0;
 	}
 }
 
@@ -214,14 +217,14 @@ int decl() {
 	if (token->token == ID) {
 		n1 = search(myhash,token->token,token->value_str);
 		if (!n1){
-			cerr << "linha "<< linha_atual<<": Erro variável "<< token->value_str <<" não declarada!" << endl;
-			exit(EXIT_FAILURE);
+			cerr << "linha "<< linha_atual<<": Erro fatal: variável "<< token->value_str <<" não declarada!" << endl;
+			exit(0);
 		}
 		casaToken(token,ID);
 		casaToken(token,OP_RECEBE);
 		n2 = exp();
 		if (n1->type == TYPE_INT && n2->type == TYPE_FLOAT){
-			cerr << "linha:"<< linha_atual<<": Warning perda de precisão na atribuição! "<< endl;
+			cerr << "linha "<< linha_atual<<": Warning perda de precisão na atribuição! "<< endl;
 			n1->value = (int)n2->value;
 			n1->initialized = true;
 		}
@@ -245,10 +248,7 @@ node* exp() {
 	node *n=NULL;
 	if (in(first_exp)) {
 		n = termo();
-		//printNode(stdout,n);
-		cout << endl;
 		n = exp_l(n);
-		//printNode(stdout,n);
 		DEBUG(cout<< "saiu <exp>" << endl);
 		return n;
 	} else {
@@ -270,10 +270,10 @@ node* exp_l(node *n) {
 		casaToken(token,OP_MAIS);
 		n2 = termo();
 		if (!n->initialized){
-			cerr << "linha:"<< linha_atual<<": Warning 1 variável "<< n->value_str <<"  não inicializada, assumindo valor 0! "<< endl;
+			cerr << "linha "<< linha_atual<<": Warning: variável "<< n->value_str <<"  não inicializada, assumindo valor 0! "<< endl;
 		}
 		if (!n2->initialized){
-			cerr << "linha:"<< linha_atual<<": Warning 2 variável "<< n2->value_str <<"  não inicializada, assumindo valor 0! "<< endl;
+			cerr << "linha "<< linha_atual<<": Warning: variável "<< n2->value_str <<"  não inicializada, assumindo valor 0! "<< endl;
 		}
 		n3->value = n->value + n2->value;
 		if(n->type == TYPE_FLOAT || n2->type == TYPE_FLOAT) n3->type = TYPE_FLOAT;
@@ -286,10 +286,10 @@ node* exp_l(node *n) {
 		casaToken(token,OP_MENOS);
 		n2 = termo();
 		if (!n->initialized){
-			cerr << "linha:"<< linha_atual<<": Warning 3 variável "<< n->value_str <<"  não inicializada, assumindo valor 0! "<< endl;
+			cerr << "linha"<< linha_atual<<": Warning: variável "<< n->value_str <<"  não inicializada, assumindo valor 0! "<< endl;
 		}
 		if (!n2->initialized){
-			cerr << "linha:"<< linha_atual<<": Warning 4 variável "<< n2->value_str <<"  não inicializada, assumindo valor 0! "<< endl;
+			cerr << "linha"<< linha_atual<<": Warning: variável "<< n2->value_str <<"  não inicializada, assumindo valor 0! "<< endl;
 		}
 		n3->value = n->value - n2->value;
 		if(n->type == TYPE_FLOAT || n2->type == TYPE_FLOAT) n3->type = TYPE_FLOAT;
@@ -299,8 +299,6 @@ node* exp_l(node *n) {
 		DEBUG(cout<< "saiu <exp>" << endl);
 		return n2;
 	}else {
-		//cout << "imprimindo epslon expl"<< endl;
-		//printNode(stdout,n);
 		return n;
 	}
 }
@@ -326,37 +324,39 @@ node* termo_l(node *n) {
 	DEBUG(cout<< "entrou <exp_l>" << endl);
 	//<termo-l> -> * <fator> <termo-l> | / <fator> <termo-l> | epsilon
 	node *n2 = NULL;
-	node n3;
+	node *n3 = alocaNode();
+	n3->value_str = strdup("<termol>");
+	n3->token = ID;
 	if (token->token == OP_VEZES) {
 		casaToken(token,OP_VEZES);
 		n2 = fator();
 		if (!n->initialized){
-			cerr << "linha:"<< linha_atual<<": Warning 5 variável "<< n->value_str <<"  não inicializada, assumindo valor 0! "<< endl;
+			cerr << "linha"<< linha_atual<<": Warning: variável "<< n->value_str <<"  não inicializada, assumindo valor 0! "<< endl;
 		}
 		if (!n2->initialized){
-			cerr << "linha:"<< linha_atual<<": Warning 6 variável "<< n2->value_str <<"  não inicializada, assumindo valor 0! "<< endl;
+			cerr << "linha"<< linha_atual<<": Warning: variável "<< n2->value_str <<"  não inicializada, assumindo valor 0! "<< endl;
 		}
-		n3.value = n->value * n2->value;
-		if(n->type == TYPE_FLOAT || n2->type == TYPE_FLOAT) n3.type = TYPE_FLOAT;
-		else n3.type = TYPE_INT;
-		n3.initialized = true;
-		n2 = termo_l(&n3);
+		n3->value = n->value * n2->value;
+		if(n->type == TYPE_FLOAT || n2->type == TYPE_FLOAT) n3->type = TYPE_FLOAT;
+		else n3->type = TYPE_INT;
+		n3->initialized = true;
+		n2 = termo_l(n3);
 		DEBUG(cout<< "saiu <termo_l>" << endl);
 		return n2;
 	}else if (token->token == OP_DIVIDIDO) {
 		casaToken(token,OP_DIVIDIDO);
 		n2 = fator();
 		if (!n->initialized){
-			cerr << "linha:"<< linha_atual<<": Warning 7 variável "<< n->value_str <<"  não inicializada, assumindo valor 0! "<< endl;
+			cerr << "linha"<< linha_atual<<": Warning: variável "<< n->value_str <<"  não inicializada, assumindo valor 0! "<< endl;
 		}
 		if (!n2->initialized){
-			cerr << "linha:"<< linha_atual<<": Warning 8 variável "<< n2->value_str <<"  não inicializada, assumindo valor 0! "<< endl;
+			cerr << "linha"<< linha_atual<<": Warning: variável "<< n2->value_str <<"  não inicializada, assumindo valor 0! "<< endl;
 		}
-		n3.value = n->value / n2->value;
-		if(n->type == TYPE_FLOAT || n2->type == TYPE_FLOAT) n3.type = TYPE_FLOAT;
-		else n3.type = TYPE_INT;
-		n3.initialized = true;
-		n2 = termo_l(&n3);
+		n3->value = n->value / n2->value;
+		if(n->type == TYPE_FLOAT || n2->type == TYPE_FLOAT) n3->type = TYPE_FLOAT;
+		else n3->type = TYPE_INT;
+		n3->initialized = true;
+		n2 = termo_l(n3);
 		DEBUG(cout<< "saiu <exp_l>" << endl);
 		return n2;
 	}else {
@@ -381,7 +381,7 @@ node* fator() {
 	}else if (token->token == ID) {
 		n = search(myhash,token->token,token->value_str);
 		if(!n){
-			cerr << "linha:"<< linha_atual<<": Erro variável "<< n->value_str <<"  não declarada!  "<< endl;
+			cerr << "linha "<< linha_atual<<": Erro fatal: variável "<< token->value_str <<"  não declarada!  "<< endl;
 			exit(0);
 		}
 		casaToken(token,ID);
